@@ -252,13 +252,14 @@ namespace Cameyo.RdpMon
                 lv.Items.Clear();
             }
             var now = DateTime.UtcNow;
-
-            using (var db = new LiteDatabase("Filename=" + Utils.MyPath("RdpMon.db") + ";utc=true"))
+            try
             {
-                var _lastDbModif = DbProps.Get(db, "LastSessionChange");
-                var lastDbModif = (_lastDbModif != null ? DateTime.Parse(_lastDbModif) : DateTime.MinValue);
-                var table = db.GetCollection<Session>("Session");
-                foreach (var dbSession in table.FindAll())
+                using (var db = new LiteDatabase("Filename=" + Utils.MyPath("RdpMon.db") + ";utc=true;connection=shared"))
+                {
+                    var _lastDbModif = DbProps.Get(db, "LastSessionChange");
+                    var lastDbModif = (_lastDbModif != null ? DateTime.Parse(_lastDbModif) : DateTime.MinValue);
+                    var table = db.GetCollection<Session>("Session");
+                    foreach (var dbSession in table.FindAll())
                 {
                     if (dbSession.Start < lastSessionsRefresh && dbSession.End != null)
                     {
@@ -326,12 +327,17 @@ namespace Cameyo.RdpMon
                     }
                 }
             }
+            catch (LiteException ex)
+            {
+                Log("RefreshSessionsLV database error: " + ex.Message);
+            }
             if (startedLvUpdate)
             {
                 lv.ListViewItemSorter = sessionsSorter;
                 lv.Sort();
                 lv.EndUpdate();
                 lv.ListViewItemSorter = null;
+            }
             }
             lastSessionsRefresh = now;
         }
@@ -426,10 +432,18 @@ namespace Cameyo.RdpMon
             var session = (Cameyo.RdpMon.Session)item.Tag;
             var sessionUid = session.SessionUid;
             IEnumerable<Cameyo.RdpMon.Process> processes = null;
-            using (var db = new LiteDatabase("Filename=" + Utils.MyPath("RdpMon.db") + ";utc=true"))
+            try
             {
-                var table = db.GetCollection<Process>("Process");
-                processes = table.FindAll().Where(p => p.ExecInfos.Any(info => info.SessionUid == sessionUid)).ToList();
+                using (var db = new LiteDatabase("Filename=" + Utils.MyPath("RdpMon.db") + ";utc=true;connection=shared"))
+                {
+                    var table = db.GetCollection<Process>("Process");
+                    processes = table.FindAll().Where(p => p.ExecInfos.Any(info => info.SessionUid == sessionUid)).ToList();
+                }
+            }
+            catch (LiteException ex)
+            {
+                Log("OnSessionsLvSelectionChanged database error: " + ex.Message);
+                processes = new List<Process>();
             }
 
             sessionProcessesLv.BeginUpdate();

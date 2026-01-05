@@ -45,55 +45,62 @@ namespace Cameyo.RdpMon
             try
             {
                 var provider = "Security";
-                using (var db = new LiteDatabase("Filename=" + Utils.MyPath("RdpMon.db") + ";utc=true"))
+                try
                 {
-                    var _lastDbModif = DbProps.Get(db, "LastAddrChange");
-                    var lastDbModif = (_lastDbModif != null ? DateTime.Parse(_lastDbModif) : DateTime.MinValue);
-                    var fromUtc = (_fromUtc == DateTime.MinValue ? lastDbModif : _fromUtc);
-                    //var fromLocal = fromUtc.ToLocalTime();
-                    var query = "*[" +
-                                "(System/EventID=" + SuccessEvtId.ToString() + " or " + "System/EventID=" + FailureEvtId.ToString() + ")" +
-                                " and " +
-                                "System[TimeCreated[@SystemTime>'" + fromUtc.ToString("yyyy-MM-dd") + "T" + fromUtc.ToString("HH:mm:ss") + ".000000000Z" + "']]" +
-                                "]";
+                    using (var db = new LiteDatabase("Filename=" + Utils.MyPath("RdpMon.db") + ";utc=true;connection=shared"))
+                    {
+                        var _lastDbModif = DbProps.Get(db, "LastAddrChange");
+                        var lastDbModif = (_lastDbModif != null ? DateTime.Parse(_lastDbModif) : DateTime.MinValue);
+                        var fromUtc = (_fromUtc == DateTime.MinValue ? lastDbModif : _fromUtc);
+                        //var fromLocal = fromUtc.ToLocalTime();
+                        var query = "*[" +
+                                    "(System/EventID=" + SuccessEvtId.ToString() + " or " + "System/EventID=" + FailureEvtId.ToString() + ")" +
+                                    " and " +
+                                    "System[TimeCreated[@SystemTime>'" + fromUtc.ToString("yyyy-MM-dd") + "T" + fromUtc.ToString("HH:mm:ss") + ".000000000Z" + "']]" +
+                                    "]";
 
-                    // Skip if DB hasn't changed since fromUtc
-                    if (lastDbModif != null && lastDbModif < fromUtc)
-                    {
-                        Log(logprefix + "out: DB unchanged, skipping");
-                        iteration++;
-                        return addrs;
-                    }
-                    
-                    var addrTable = db.GetCollection<Addr>("Addr");
-                    if (updateDb)
-                    {
-                        var eventsQuery = new EventLogQuery(provider, PathType.LogName, query);
-                        if (dbg)
+                        // Skip if DB hasn't changed since fromUtc
+                        if (lastDbModif != null && lastDbModif < fromUtc)
                         {
-                            var rand = new Random(Environment.TickCount);
-                            var dbgRand = true;
-                            for (int i = 0; i < 200; i++)
+                            Log(logprefix + "out: DB unchanged, skipping");
+                            iteration++;
+                            return addrs;
+                        }
+                        
+                        var addrTable = db.GetCollection<Addr>("Addr");
+                        if (updateDb)
+                        {
+                            var eventsQuery = new EventLogQuery(provider, PathType.LogName, query);
+                            if (dbg)
                             {
-                                var success = ((dbgRand ? rand.Next(200) : i) > 400);
-                                var ip = string.Format("{0}.{1}.{2}.{3}", 132, 154, 255, (dbgRand ? rand.Next(50) : i) + 1);
-                                var now = DateTime.UtcNow;
-                                var utcTime = dbgRand ? now.Subtract(TimeSpan.FromMinutes(rand.Next(60)))
-                                                      : new DateTime(now.Year, now.Month, now.Day, now.Hour, 0, 0);
-                                var userName = "User" + (dbgRand ? rand.Next(9) : i) + 1;
-                                if (utcTime > fromUtc)
-                                    addrs.Aggregate(addrTable, ip, utcTime, success, userName);
+                                var rand = new Random(Environment.TickCount);
+                                var dbgRand = true;
+                                for (int i = 0; i < 200; i++)
+                                {
+                                    var success = ((dbgRand ? rand.Next(200) : i) > 400);
+                                    var ip = string.Format("{0}.{1}.{2}.{3}", 132, 154, 255, (dbgRand ? rand.Next(50) : i) + 1);
+                                    var now = DateTime.UtcNow;
+                                    var utcTime = dbgRand ? now.Subtract(TimeSpan.FromMinutes(rand.Next(60)))
+                                                          : new DateTime(now.Year, now.Month, now.Day, now.Hour, 0, 0);
+                                    var userName = "User" + (dbgRand ? rand.Next(9) : i) + 1;
+                                    if (utcTime > fromUtc)
+                                        addrs.Aggregate(addrTable, ip, utcTime, success, userName);
+                                }
                             }
+                            else
+                            {
+                                var logReader = new EventLogReader(eventsQuery);
+                                for (var evt = logReader.ReadEvent(); evt != null; evt = logReader.ReadEvent())
+                                    addrs.Aggregate(addrTable, evt, dbg);
+                            }
+                            if (addrs.lastDbChange != null)
+                            DbProps.Set(db, "LastAddrChange", DateTime.UtcNow.ToString("O"));
                         }
-                        else
-                        {
-                            var logReader = new EventLogReader(eventsQuery);
-                            for (var evt = logReader.ReadEvent(); evt != null; evt = logReader.ReadEvent())
-                                addrs.Aggregate(addrTable, evt, dbg);
-                        }
-                        if (addrs.lastDbChange != null)
-                        DbProps.Set(db, "LastAddrChange", DateTime.UtcNow.ToString("O"));
                     }
+                }
+                catch (LiteException ex)
+                {
+                    Log(logprefix + "* database exception: " + ex.Message);
                 }
             }
             catch (Exception ex)
@@ -182,18 +189,25 @@ namespace Cameyo.RdpMon
             updateDb = _updateDb;
             updateFw = _updateFw;
             Items = new Dictionary<string, Addr>();
-            using (var db = new LiteDatabase("Filename=" + Utils.MyPath("RdpMon.db") + ";utc=true"))
+            try
             {
-                var addrTable = db.GetCollection<Addr>("Addr");
-                var storedAddrs = addrTable.FindAll().ToArray();
-                mostRecentAddr = DateTime.MinValue;
-                for (int i = 0; i < storedAddrs.Length; i++)
+                using (var db = new LiteDatabase("Filename=" + Utils.MyPath("RdpMon.db") + ";utc=true;connection=shared"))
                 {
-                    var item = storedAddrs[i];
-                    AggregateMulti(addrTable, item.AddrId, item.SuccessCount, item.FailCount, item.First, item.Last, item.UserNames);
-                    if (item.Last > mostRecentAddr)
-                        mostRecentAddr = item.Last;
+                    var addrTable = db.GetCollection<Addr>("Addr");
+                    var storedAddrs = addrTable.FindAll().ToArray();
+                    mostRecentAddr = DateTime.MinValue;
+                    for (int i = 0; i < storedAddrs.Length; i++)
+                    {
+                        var item = storedAddrs[i];
+                        AggregateMulti(addrTable, item.AddrId, item.SuccessCount, item.FailCount, item.First, item.Last, item.UserNames);
+                        if (item.Last > mostRecentAddr)
+                            mostRecentAddr = item.Last;
+                    }
                 }
+            }
+            catch (LiteException ex)
+            {
+                Log("Addrs constructor database error: " + ex.Message);
             }
         }
 

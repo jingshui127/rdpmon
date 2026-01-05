@@ -72,49 +72,56 @@ namespace Cameyo.RdpMon
                 logprefix = "ProcessMon.OnNewProcessReady(" + pid + ", " + shortName + ", #" + wtsSessionId + "): ";
                 var normalizedPath = NormalizePath(processInfo.FullFileName);
                 Log(logprefix + normalizedPath + ", parent=" + parentPid.ToString());
-                using (var db = new LiteDatabase("Filename=" + Utils.MyPath("RdpMon.db") + ";utc=true"))
+                try
                 {
-                    var hash = Utils.FileHashSHA256(processInfo.FullFileName);
-                    if (hash != null)
+                    using (var db = new LiteDatabase("Filename=" + Utils.MyPath("RdpMon.db") + ";utc=true;connection=shared"))
                     {
-                        var wtsInfo = WTS.QuerySessionInfo((int)wtsSessionId);
-                        long sessionUid = 0;
-                        if (wtsInfo != null)
-                            sessionUid = Session.GetSessionUid(wtsSessionId, wtsInfo.LogonTime);
+                        var hash = Utils.FileHashSHA256(processInfo.FullFileName);
+                        if (hash != null)
+                        {
+                            var wtsInfo = WTS.QuerySessionInfo((int)wtsSessionId);
+                            long sessionUid = 0;
+                            if (wtsInfo != null)
+                                sessionUid = Session.GetSessionUid(wtsSessionId, wtsInfo.LogonTime);
+                            else
+                                Log(logprefix + "* failed finding session #" + wtsSessionId);
+                            var table = db.GetCollection<Cameyo.RdpMon.Process>("Process");
+                            var item = table.FindById(hash);
+                            var execInfo = new ExecInfo
+                            {
+                                SessionUid = sessionUid,
+                                Flags = 0,
+                                Pid = pid,
+                                ParentPid = parentPid,
+                                Start = DateTime.UtcNow,
+                            };
+                            if (item != null)
+                            {
+                                var _list = item.ExecInfos.ToList();
+                                _list.Add(execInfo);
+                                item.ExecInfos = _list.ToArray();
+                                table.Update(item);
+                            }
+                            else if (item == null)
+                            {
+                                item = new Process();
+                                item.ExecInfos = new [] { execInfo };
+                                item.ProcessId = hash;
+                                item.HashType = 1;
+                                item.Flags = 0;
+                                item.Path = normalizedPath;
+                                //item.Start = DateTime.UtcNow;
+                                table.Insert(item);
+                                DbProps.Set(db, "LastProcessChange", DateTime.UtcNow.ToString("O"));
+                            }
+                        }
                         else
-                            Log(logprefix + "* failed finding session #" + wtsSessionId);
-                        var table = db.GetCollection<Cameyo.RdpMon.Process>("Process");
-                        var item = table.FindById(hash);
-                        var execInfo = new ExecInfo
-                        {
-                            SessionUid = sessionUid,
-                            Flags = 0,
-                            Pid = pid,
-                            ParentPid = parentPid,
-                            Start = DateTime.UtcNow,
-                        };
-                        if (item != null)
-                        {
-                            var _list = item.ExecInfos.ToList();
-                            _list.Add(execInfo);
-                            item.ExecInfos = _list.ToArray();
-                            table.Update(item);
-                        }
-                        else if (item == null)
-                        {
-                            item = new Process();
-                            item.ExecInfos = new [] { execInfo };
-                            item.ProcessId = hash;
-                            item.HashType = 1;
-                            item.Flags = 0;
-                            item.Path = normalizedPath;
-                            //item.Start = DateTime.UtcNow;
-                            table.Insert(item);
-                            DbProps.Set(db, "LastProcessChange", DateTime.UtcNow.ToString("O"));
-                        }
+                            Log(logprefix + "failed hashing file");
                     }
-                    else
-                        Log(logprefix + "failed hashing file");
+                }
+                catch (LiteException ex)
+                {
+                    Log(logprefix + "* database exception: " + ex.Message);
                 }
             }
             catch (Exception ex)

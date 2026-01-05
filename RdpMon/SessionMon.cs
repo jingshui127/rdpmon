@@ -14,32 +14,39 @@ namespace Cameyo.RdpMon
             // Catch up with existing sessions, if not already registered in DB
             var logprefix = "SessionMon(): ";
             var activeSessions = WTS.ListSessions();
-            using (var db = new LiteDatabase("Filename=" + Utils.MyPath("RdpMon.db") + ";utc=true"))
+            try
             {
-                var table = db.GetCollection<Session>("Session");
-                foreach (var wtsInfo in activeSessions)
+                using (var db = new LiteDatabase("Filename=" + Utils.MyPath("RdpMon.db") + ";utc=true;connection=shared"))
                 {
-                    if (string.IsNullOrEmpty(wtsInfo.UserName))   // Skipping user-less sessions such as #0 and #65535
-                        continue;
-                    var sessionUID = wtsInfo.SessionUID();
-                    var session = table.FindById(sessionUID);
-                    if (session == null)
+                    var table = db.GetCollection<Session>("Session");
+                    foreach (var wtsInfo in activeSessions)
                     {
-                        Log(logprefix + "found active WTS session to catch up with: #" + wtsInfo.ID + "/" + wtsInfo.UserName);
-                        session = new Session
+                        if (string.IsNullOrEmpty(wtsInfo.UserName))   // Skipping user-less sessions such as #0 and #65535
+                            continue;
+                        var sessionUID = wtsInfo.SessionUID();
+                        var session = table.FindById(sessionUID);
+                        if (session == null)
                         {
-                            SessionUid = sessionUID,
-                            WtsSessionId = wtsInfo.ID,
-                            Start = wtsInfo.LogonTime,
-                            End = null,
-                            User = wtsInfo.UserName,
-                            Addr = null,   // Perhaps we could still try and obtain IP
-                            Flags = 0,
-                        };
-                        table.Insert(session);
-                        DbProps.Set(db, "LastSessionChange", DateTime.UtcNow.ToString("O"));
+                            Log(logprefix + "found active WTS session to catch up with: #" + wtsInfo.ID + "/" + wtsInfo.UserName);
+                            session = new Session
+                            {
+                                SessionUid = sessionUID,
+                                WtsSessionId = wtsInfo.ID,
+                                Start = wtsInfo.LogonTime,
+                                End = null,
+                                User = wtsInfo.UserName,
+                                Addr = null,   // Perhaps we could still try and obtain IP
+                                Flags = 0,
+                            };
+                            table.Insert(session);
+                            DbProps.Set(db, "LastSessionChange", DateTime.UtcNow.ToString("O"));
+                        }
                     }
                 }
+            }
+            catch (LiteException ex)
+            {
+                Log(logprefix + "* database exception: " + ex.Message);
             }
         }
         
@@ -99,21 +106,28 @@ namespace Cameyo.RdpMon
                                         wtsInfo = WTS.QuerySessionInfo(_wtsSessionId);
                                         if (wtsInfo != null)
                                         {
-                                            using (var db = new LiteDatabase("Filename=" + Utils.MyPath("RdpMon.db") + ";utc=true"))
+                                            using (var db = new LiteDatabase("Filename=" + Utils.MyPath("RdpMon.db") + ";utc=true;connection=shared"))
                                             {
-                                                var table = db.GetCollection<Session>("Session");
-                                                var session = new Session
+                                                try
                                                 {
-                                                    SessionUid = Session.GetSessionUid(_wtsSessionId, wtsInfo.LogonTime),
-                                                    WtsSessionId = _wtsSessionId,
-                                                    Start = wtsInfo.LogonTime,
-                                                    End = null,
-                                                    User = wtsInfo.UserName,
-                                                    Addr = addr,
-                                                    Flags = 0,
-                                                };
-                                                table.Insert(session);
-                                                DbProps.Set(db, "LastSessionChange", DateTime.UtcNow.ToString("O"));
+                                                    var table = db.GetCollection<Session>("Session");
+                                                    var session = new Session
+                                                    {
+                                                        SessionUid = Session.GetSessionUid(_wtsSessionId, wtsInfo.LogonTime),
+                                                        WtsSessionId = _wtsSessionId,
+                                                        Start = wtsInfo.LogonTime,
+                                                        End = null,
+                                                        User = wtsInfo.UserName,
+                                                        Addr = addr,
+                                                        Flags = 0,
+                                                    };
+                                                    table.Insert(session);
+                                                    DbProps.Set(db, "LastSessionChange", DateTime.UtcNow.ToString("O"));
+                                                }
+                                                catch (LiteException dbEx)
+                                                {
+                                                    Log(logprefix + "* database exception: " + dbEx.Message);
+                                                }
                                             }
                                         }
                                         else
@@ -133,17 +147,24 @@ namespace Cameyo.RdpMon
                         wtsInfo = WTS.QuerySessionInfo(wtsSessionId);
                         if (wtsInfo != null)
                         {
-                            using (var db = new LiteDatabase("Filename=" + Utils.MyPath("RdpMon.db") + ";utc=true"))
+                            using (var db = new LiteDatabase("Filename=" + Utils.MyPath("RdpMon.db") + ";utc=true;connection=shared"))
                             {
-                                var table = db.GetCollection<Session>("Session");
-                                var sessionUID = Session.GetSessionUid(wtsSessionId, wtsInfo.LogonTime);
-                                var session = table.FindById(sessionUID);
-                                if (session != null)
+                                try
                                 {
-                                    session.End = DateTime.UtcNow;
-                                    table.Update(session);
+                                    var table = db.GetCollection<Session>("Session");
+                                    var sessionUID = Session.GetSessionUid(wtsSessionId, wtsInfo.LogonTime);
+                                    var session = table.FindById(sessionUID);
+                                    if (session != null)
+                                    {
+                                        session.End = DateTime.UtcNow;
+                                        table.Update(session);
+                                    }
+                                    DbProps.Set(db, "LastSessionChange", DateTime.UtcNow.ToString("O"));
                                 }
-                                DbProps.Set(db, "LastSessionChange", DateTime.UtcNow.ToString("O"));
+                                catch (LiteException dbEx)
+                                {
+                                    Log(logprefix + "* database exception: " + dbEx.Message);
+                                }
                             }
                         }
                         else
