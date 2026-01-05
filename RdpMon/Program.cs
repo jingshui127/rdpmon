@@ -119,7 +119,18 @@ namespace Cameyo.RdpMon
                     
                     // Check if service is started
                     if (!started)
-                        MessageBox.Show("警告：'RdpMon'服务未启动。不能收集数据。");
+                    {
+                        Log("Service not started, attempting to start...");
+                        var startResult = Utils.StartService("RdpMon", new TimeSpan(0, 0, 10));
+                        if (startResult != null)
+                        {
+                            MessageBox.Show("警告：无法启动 'RdpMon' 服务。" + Environment.NewLine + startResult);
+                        }
+                        else
+                        {
+                            MessageBox.Show("'RdpMon' 服务已启动。");
+                        }
+                    }
 
                     // Start GUI
                     var mutexName = "RdpMon.GUI";
