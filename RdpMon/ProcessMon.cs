@@ -110,7 +110,7 @@ namespace Cameyo.RdpMon
                             item.Path = normalizedPath;
                             //item.Start = DateTime.UtcNow;
                             table.Insert(item);
-                            DbProps.Set(db, "LastProcessChange", DateTime.UtcNow);
+                            DbProps.Set(db, "LastProcessChange", DateTime.UtcNow.ToString("O"));
                         }
                     }
                     else

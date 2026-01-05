@@ -256,7 +256,7 @@ namespace Cameyo.RdpMon
             using (var db = new LiteDatabase("Filename=" + Utils.MyPath("RdpMon.db") + ";utc=true"))
             {
                 var _lastDbModif = DbProps.Get(db, "LastSessionChange");
-                var lastDbModif = (_lastDbModif != null ? (DateTime)_lastDbModif : DateTime.MinValue);
+                var lastDbModif = (_lastDbModif != null ? DateTime.Parse(_lastDbModif) : DateTime.MinValue);
                 var table = db.GetCollection<Session>("Session");
                 foreach (var dbSession in table.FindAll())
                 {

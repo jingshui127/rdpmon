@@ -48,7 +48,7 @@ namespace Cameyo.RdpMon
                 using (var db = new LiteDatabase("Filename=" + Utils.MyPath("RdpMon.db") + ";utc=true"))
                 {
                     var _lastDbModif = DbProps.Get(db, "LastAddrChange");
-                    var lastDbModif = (_lastDbModif != null ? (DateTime)_lastDbModif : DateTime.MinValue);
+                    var lastDbModif = (_lastDbModif != null ? DateTime.Parse(_lastDbModif) : DateTime.MinValue);
                     var fromUtc = (_fromUtc == DateTime.MinValue ? lastDbModif : _fromUtc);
                     //var fromLocal = fromUtc.ToLocalTime();
                     var query = "*[" +
@@ -92,7 +92,7 @@ namespace Cameyo.RdpMon
                                 addrs.Aggregate(addrTable, evt, dbg);
                         }
                         if (addrs.lastDbChange != null)
-                            DbProps.Set(db, "LastAddrChange", DateTime.UtcNow);
+                        DbProps.Set(db, "LastAddrChange", DateTime.UtcNow.ToString("O"));
                     }
                 }
             }
@@ -148,16 +148,16 @@ namespace Cameyo.RdpMon
         public class Prop
         {
             public string PropId { get; set; }
-            public object Val { get; set; }
+            public string Val { get; set; }
         }
 
-        public static void Set(LiteDatabase db, string name, object val)
+        public static void Set(LiteDatabase db, string name, string val)
         {
             var table = db.GetCollection<Prop>("Prop");
             table.Upsert(new Prop {PropId = name, Val = val});
         }
         
-        public static object Get(LiteDatabase db, string name)
+        public static string Get(LiteDatabase db, string name)
         {
             var table = db.GetCollection<Prop>("Prop");
             var item = table.FindById(name);

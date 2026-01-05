@@ -37,7 +37,7 @@ namespace Cameyo.RdpMon
                             Flags = 0,
                         };
                         table.Insert(session);
-                        DbProps.Set(db, "LastSessionChange", DateTime.UtcNow);
+                        DbProps.Set(db, "LastSessionChange", DateTime.UtcNow.ToString("O"));
                     }
                 }
             }
@@ -113,7 +113,7 @@ namespace Cameyo.RdpMon
                                                     Flags = 0,
                                                 };
                                                 table.Insert(session);
-                                                DbProps.Set(db, "LastSessionChange", DateTime.UtcNow);
+                                                DbProps.Set(db, "LastSessionChange", DateTime.UtcNow.ToString("O"));
                                             }
                                         }
                                         else
@@ -143,7 +143,7 @@ namespace Cameyo.RdpMon
                                     session.End = DateTime.UtcNow;
                                     table.Update(session);
                                 }
-                                DbProps.Set(db, "LastSessionChange", DateTime.UtcNow);
+                                DbProps.Set(db, "LastSessionChange", DateTime.UtcNow.ToString("O"));
                             }
                         }
                         else
