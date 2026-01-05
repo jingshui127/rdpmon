@@ -260,70 +260,71 @@ namespace Cameyo.RdpMon
                     var lastDbModif = (_lastDbModif != null ? DateTime.Parse(_lastDbModif) : DateTime.MinValue);
                     var table = db.GetCollection<Session>("Session");
                     foreach (var dbSession in table.FindAll())
-                {
-                    if (dbSession.Start < lastSessionsRefresh && dbSession.End != null)
                     {
-                        if (DateTime.UtcNow.Subtract(dbSession.End.Value) < TimeSpan.FromSeconds(60) &&
-                            FindSessionLvItem(dbSession.SessionUid, out var lvi))
+                        if (dbSession.Start < lastSessionsRefresh && dbSession.End != null)
                         {
-                            // Update just-ended session
-                            lvi.SubItems[ColSessionState.DisplayIndex].Text = "已结束";
-                            lvi.SubItems[ColSessionEnded.DisplayIndex].Text = (dbSession.End != null ? dbSession.End.Value.ToLocalTime().ToString("MM/dd HH:mm:ss") : "");
-                            lvi.ImageIndex = -1;
-                        }
-                        continue;
-                    }
-
-                    var equivalentActiveSession = GetEquivalentActiveSession(dbSession, activeSessions);
-                    if (!startedLvUpdate)
-                    {
-                        startedLvUpdate = true;
-                        lv.BeginUpdate();
-                        lv.ListViewItemSorter = null;
-                    }
-
-                    var existingFound = false;
-                    if (equivalentActiveSession != null)
-                    {
-                        if (FindSessionLvItem(dbSession.SessionUid, out var lvi))
-                        {
-                            lvi.SubItems[ColSessionStarted.DisplayIndex].Text = dbSession.Start.ToLocalTime().ToString("MM/dd HH:mm:ss");
-                            lvi.SubItems[ColSessionState.DisplayIndex].Text = equivalentActiveSession.StateStr();
-                            lvi.Tag = dbSession;
-                            existingFound = true;
-                        }
-                    }
-                    if (existingFound)
-                        continue;
-
-                    // Add / update in list
-                    {
-                        var adding = false;
-                        if (!FindSessionLvItem(dbSession.SessionUid, out var lvi)) // Special case: sometimes LvItem may be found in list if the DB has missed its Ended time (i.e. if the service was down while the session ended)
-                        {
-                            // Usual case
-                            lvi = new ListViewItem();
-                            lvi.SubItems.AddRange(new[] { "", "", "", "", "", "", "" });
-                            adding = true;
+                            if (DateTime.UtcNow.Subtract(dbSession.End.Value) < TimeSpan.FromSeconds(60) &&
+                                FindSessionLvItem(dbSession.SessionUid, out var lvi))
+                            {
+                                // Update just-ended session
+                                lvi.SubItems[ColSessionState.DisplayIndex].Text = "已结束";
+                                lvi.SubItems[ColSessionEnded.DisplayIndex].Text = (dbSession.End != null ? dbSession.End.Value.ToLocalTime().ToString("MM/dd HH:mm:ss") : "");
+                                lvi.ImageIndex = -1;
+                            }
+                            continue;
                         }
 
-                        lvi.SubItems[ColWtsSessionId.DisplayIndex].Text = dbSession.WtsSessionId.ToString();
-                        lvi.SubItems[ColSessionUser.DisplayIndex].Text = (dbSession.User ?? "").ToString();
-                        lvi.SubItems[ColSessionStarted.DisplayIndex].Text = dbSession.Start.ToLocalTime().ToString("MM/dd HH:mm:ss");
-                        if (dbSession.End != null)
-                            lvi.SubItems[ColSessionState.DisplayIndex].Text = "已结束";
+                        var equivalentActiveSession = GetEquivalentActiveSession(dbSession, activeSessions);
+                        if (!startedLvUpdate)
+                        {
+                            startedLvUpdate = true;
+                            lv.BeginUpdate();
+                            lv.ListViewItemSorter = null;
+                        }
+
+                        var existingFound = false;
                         if (equivalentActiveSession != null)
                         {
-                            lvi.ImageIndex = 1;
-                            lvi.SubItems[ColSessionEnded.DisplayIndex].Text = "进行中";
+                            if (FindSessionLvItem(dbSession.SessionUid, out var lvi))
+                            {
+                                lvi.SubItems[ColSessionStarted.DisplayIndex].Text = dbSession.Start.ToLocalTime().ToString("MM/dd HH:mm:ss");
+                                lvi.SubItems[ColSessionState.DisplayIndex].Text = equivalentActiveSession.StateStr();
+                                lvi.Tag = dbSession;
+                                existingFound = true;
+                            }
                         }
-                        else
-                            lvi.SubItems[ColSessionEnded.DisplayIndex].Text = (dbSession.End != null ? dbSession.End.Value.ToLocalTime().ToString("MM/dd HH:mm:ss") : "");
+                        if (existingFound)
+                            continue;
 
-                        lvi.SubItems[ColSessionAddr.DisplayIndex].Text = (dbSession.Addr == "127.0.0.1" ? "localhost" : dbSession.Addr);
-                        lvi.Tag = dbSession;
-                        if (adding)
-                            lv.Items.Add(lvi);
+                        // Add / update in list
+                        {
+                            var adding = false;
+                            if (!FindSessionLvItem(dbSession.SessionUid, out var lvi)) // Special case: sometimes LvItem may be found in list if the DB has missed its Ended time (i.e. if the service was down while the session ended)
+                            {
+                                // Usual case
+                                lvi = new ListViewItem();
+                                lvi.SubItems.AddRange(new[] { "", "", "", "", "", "", "" });
+                                adding = true;
+                            }
+
+                            lvi.SubItems[ColWtsSessionId.DisplayIndex].Text = dbSession.WtsSessionId.ToString();
+                            lvi.SubItems[ColSessionUser.DisplayIndex].Text = (dbSession.User ?? "").ToString();
+                            lvi.SubItems[ColSessionStarted.DisplayIndex].Text = dbSession.Start.ToLocalTime().ToString("MM/dd HH:mm:ss");
+                            if (dbSession.End != null)
+                                lvi.SubItems[ColSessionState.DisplayIndex].Text = "已结束";
+                            if (equivalentActiveSession != null)
+                            {
+                                lvi.ImageIndex = 1;
+                                lvi.SubItems[ColSessionEnded.DisplayIndex].Text = "进行中";
+                            }
+                            else
+                                lvi.SubItems[ColSessionEnded.DisplayIndex].Text = (dbSession.End != null ? dbSession.End.Value.ToLocalTime().ToString("MM/dd HH:mm:ss") : "");
+
+                            lvi.SubItems[ColSessionAddr.DisplayIndex].Text = (dbSession.Addr == "127.0.0.1" ? "localhost" : dbSession.Addr);
+                            lvi.Tag = dbSession;
+                            if (adding)
+                                lv.Items.Add(lvi);
+                        }
                     }
                 }
             }
