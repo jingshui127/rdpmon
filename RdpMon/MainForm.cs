@@ -429,7 +429,7 @@ namespace Cameyo.RdpMon
             using (var db = new LiteDatabase("Filename=" + Utils.MyPath("RdpMon.db") + ";utc=true"))
             {
                 var table = db.GetCollection<Process>("Process");
-                processes = table.Find(Query.Where("ANY($.ExecInfos[*] WHERE $.SessionUid == " + sessionUid + ")"));
+                processes = table.FindAll().Where(p => p.ExecInfos.Any(info => info.SessionUid == sessionUid)).ToList();
             }
 
             sessionProcessesLv.BeginUpdate();
