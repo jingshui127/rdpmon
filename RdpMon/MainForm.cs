@@ -338,7 +338,6 @@ namespace Cameyo.RdpMon
                 lv.EndUpdate();
                 lv.ListViewItemSorter = null;
             }
-            }
             lastSessionsRefresh = now;
         }
 
