@@ -47,7 +47,7 @@
             this.cancelBtn.Name = "cancelBtn";
             this.cancelBtn.Size = new System.Drawing.Size(75, 23);
             this.cancelBtn.TabIndex = 0;
-            this.cancelBtn.Text = "&Cancel";
+            this.cancelBtn.Text = "(&C)取消";
             this.cancelBtn.UseVisualStyleBackColor = true;
             // 
             // okBtn
@@ -57,7 +57,7 @@
             this.okBtn.Name = "okBtn";
             this.okBtn.Size = new System.Drawing.Size(75, 23);
             this.okBtn.TabIndex = 1;
-            this.okBtn.Text = "&OK";
+            this.okBtn.Text = "(&O)确定";
             this.okBtn.UseVisualStyleBackColor = true;
             this.okBtn.Click += new System.EventHandler(this.OkBtn_Click);
             // 
@@ -73,6 +73,7 @@
             this.groupBox1.Size = new System.Drawing.Size(203, 78);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "操作主模式";
             // 
             // elevationImg
             // 
@@ -93,7 +94,7 @@
             this.withConsentRadio.Size = new System.Drawing.Size(66, 17);
             this.withConsentRadio.TabIndex = 3;
             this.withConsentRadio.TabStop = true;
-            this.withConsentRadio.Text = "&Ask user";
+            this.withConsentRadio.Text = "(&A)询问用户";
             this.withConsentRadio.UseVisualStyleBackColor = true;
             // 
             // noConsentRadio
@@ -103,7 +104,7 @@
             this.noConsentRadio.Name = "noConsentRadio";
             this.noConsentRadio.Size = new System.Drawing.Size(70, 17);
             this.noConsentRadio.TabIndex = 4;
-            this.noConsentRadio.Text = "&Don\'t ask";
+            this.noConsentRadio.Text = "(&D)不询问";
             this.noConsentRadio.UseVisualStyleBackColor = true;
             // 
             // ShadowForm
@@ -123,7 +124,7 @@
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Prompt for user confirmation";
+            this.Text = "影子查看配置";
             this.Load += new System.EventHandler(this.ShadowForm_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

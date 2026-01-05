@@ -505,7 +505,7 @@ namespace Cameyo.RdpMon
                     dbgStr += profiles + "\n";
                 }
             }
-            MessageBox.Show(dbgStr);
+            MessageBox.Show(dbgStr, "防火墙RDP规则");
 
         }
                         

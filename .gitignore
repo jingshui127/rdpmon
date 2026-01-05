@@ -1,0 +1,25 @@
+# IDE文件夹
+.vs/
+.vscode/
+*.suo
+*.user
+*.sln.docstates
+
+# 编译输出
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+
+# 本地数据库
+*.db
+RdpMon.db
+RdpMon.db-log
+
+# 日志文件
+*.log
+
+# 操作系统
+.DS_Store
+Thumbs.db

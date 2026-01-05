@@ -169,7 +169,7 @@ namespace Cameyo.RdpMon
                     lvi.ImageIndex = 0;
                     if (addr.IsOngoing()) //|| (lastRefresh != DateTime.MinValue && attack.Last > lastRefresh))
                     {
-                        lvi.SubItems[colDuration.DisplayIndex].Text = "ongoing";
+                        lvi.SubItems[colDuration.DisplayIndex].Text = "进行中";
                         lvi.UseItemStyleForSubItems = false;
                         lvi.SubItems[colDuration.DisplayIndex].ForeColor = Color.Red;
                         //lvi.ImageIndex = 1;
@@ -202,7 +202,7 @@ namespace Cameyo.RdpMon
                 for (int i = 0; i < lv.Items.Count; i++)
                 {
                     // Update "Ongoing" items that are no longer ongoing
-                    if (lv.Items[i].SubItems[colDuration.DisplayIndex].Text == "ongoing")
+                    if (lv.Items[i].SubItems[colDuration.DisplayIndex].Text == "进行中")
                     {
                         var _addr = (Addr)lv.Items[i].Tag;
                         if (!_addr.IsOngoing())
@@ -227,12 +227,12 @@ namespace Cameyo.RdpMon
             lastConnectRefresh = now;
 
             // Statistics
-            toolStripStatsLabel.Text = totalLegits + " legitimate users, " + totalAttackers + " suspected addresses";
+            toolStripStatsLabel.Text = totalLegits + " 个合法用户、" + totalAttackers + " 个可疑住所";
             if (totalAttempts > 0)
             {
-                toolStripStatsLabel.Text += ", " + totalAttempts + " password attempts";
+                toolStripStatsLabel.Text += "、" + totalAttempts + " 次密码尝试";
                 if (nla <= 0)
-                    toolStripStatsLabel.Text += ", WARNING: NLA not activated on this machine!";
+                    toolStripStatsLabel.Text += "、警告：该计算机没有启动NLA！";
             }
         }
 
@@ -266,7 +266,7 @@ namespace Cameyo.RdpMon
                             FindSessionLvItem(dbSession.SessionUid, out var lvi))
                         {
                             // Update just-ended session
-                            lvi.SubItems[ColSessionState.DisplayIndex].Text = "Ended";
+                            lvi.SubItems[ColSessionState.DisplayIndex].Text = "已结束";
                             lvi.SubItems[ColSessionEnded.DisplayIndex].Text = (dbSession.End != null ? dbSession.End.Value.ToLocalTime().ToString("MM/dd HH:mm:ss") : "");
                             lvi.ImageIndex = -1;
                         }
@@ -310,11 +310,11 @@ namespace Cameyo.RdpMon
                         lvi.SubItems[ColSessionUser.DisplayIndex].Text = (dbSession.User ?? "").ToString();
                         lvi.SubItems[ColSessionStarted.DisplayIndex].Text = dbSession.Start.ToLocalTime().ToString("MM/dd HH:mm:ss");
                         if (dbSession.End != null)
-                            lvi.SubItems[ColSessionState.DisplayIndex].Text = "Ended";
+                            lvi.SubItems[ColSessionState.DisplayIndex].Text = "已结束";
                         if (equivalentActiveSession != null)
                         {
                             lvi.ImageIndex = 1;
-                            lvi.SubItems[ColSessionEnded.DisplayIndex].Text = "ongoing";
+                            lvi.SubItems[ColSessionEnded.DisplayIndex].Text = "进行中";
                         }
                         else
                             lvi.SubItems[ColSessionEnded.DisplayIndex].Text = (dbSession.End != null ? dbSession.End.Value.ToLocalTime().ToString("MM/dd HH:mm:ss") : "");

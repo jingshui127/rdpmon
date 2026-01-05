@@ -163,7 +163,7 @@
             this.connectionsTab.Padding = new System.Windows.Forms.Padding(3);
             this.connectionsTab.Size = new System.Drawing.Size(1192, 563);
             this.connectionsTab.TabIndex = 0;
-            this.connectionsTab.Text = "Connections";
+            this.connectionsTab.Text = "连接";
             this.connectionsTab.UseVisualStyleBackColor = true;
             // 
             // mainPanel
@@ -209,37 +209,37 @@
             // 
             // colIP
             // 
-            this.colIP.Text = "IP";
+            this.colIP.Text = "IP地址";
             this.colIP.Width = 160;
             // 
             // colFailCount
             // 
-            this.colFailCount.Text = "Failures";
+            this.colFailCount.Text = "失败";
             this.colFailCount.Width = 80;
             // 
             // colSuccessCount
             // 
-            this.colSuccessCount.Text = "Success";
+            this.colSuccessCount.Text = "成功";
             this.colSuccessCount.Width = 80;
             // 
             // colFirstTime
             // 
-            this.colFirstTime.Text = "First attempt";
+            this.colFirstTime.Text = "首次尝试";
             this.colFirstTime.Width = 160;
             // 
             // colLastTime
             // 
-            this.colLastTime.Text = "Last attempt";
+            this.colLastTime.Text = "最后尝试";
             this.colLastTime.Width = 160;
             // 
             // colDuration
             // 
-            this.colDuration.Text = "Duration";
+            this.colDuration.Text = "持续时间";
             this.colDuration.Width = 160;
             // 
             // colLogins
             // 
-            this.colLogins.Text = "Logins";
+            this.colLogins.Text = "登录账户";
             this.colLogins.Width = 450;
             // 
             // statusStrip
@@ -258,7 +258,7 @@
             // 
             this.toolStripStatsLabel.Name = "toolStripStatsLabel";
             this.toolStripStatsLabel.Size = new System.Drawing.Size(32, 17);
-            this.toolStripStatsLabel.Text = "Stats";
+            this.toolStripStatsLabel.Text = "统计";
             // 
             // toolstripPanel
             // 
@@ -313,8 +313,8 @@
             this.filterBtnLegits.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.filterBtnLegits.Name = "filterBtnLegits";
             this.filterBtnLegits.Size = new System.Drawing.Size(28, 28);
-            this.filterBtnLegits.Text = "Successful connections";
-            this.filterBtnLegits.ToolTipText = "Show legitimate connections";
+            this.filterBtnLegits.Text = "成功连接";
+            this.filterBtnLegits.ToolTipText = "显示合法连接";
             this.filterBtnLegits.Click += new System.EventHandler(this.OnConnectFilterClick);
             // 
             // filterBtnAttacks
@@ -327,8 +327,8 @@
             this.filterBtnAttacks.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.filterBtnAttacks.Name = "filterBtnAttacks";
             this.filterBtnAttacks.Size = new System.Drawing.Size(28, 28);
-            this.filterBtnAttacks.Text = "Likely brute-force attempts";
-            this.filterBtnAttacks.ToolTipText = "Show illegitimate connections";
+            this.filterBtnAttacks.Text = "暴力破解";
+            this.filterBtnAttacks.ToolTipText = "显示非法连接";
             this.filterBtnAttacks.Click += new System.EventHandler(this.OnConnectFilterClick);
             // 
             // filterBtnUnknown
@@ -341,8 +341,8 @@
             this.filterBtnUnknown.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.filterBtnUnknown.Name = "filterBtnUnknown";
             this.filterBtnUnknown.Size = new System.Drawing.Size(28, 28);
-            this.filterBtnUnknown.Text = "Low-intensity connection failures";
-            this.filterBtnUnknown.ToolTipText = "Show uncertain connections";
+            this.filterBtnUnknown.Text = "低活跃连接";
+            this.filterBtnUnknown.ToolTipText = "显示不确定的连接";
             this.filterBtnUnknown.Click += new System.EventHandler(this.OnConnectFilterClick);
             // 
             // sessionsTab
@@ -353,7 +353,7 @@
             this.sessionsTab.Padding = new System.Windows.Forms.Padding(3);
             this.sessionsTab.Size = new System.Drawing.Size(1192, 563);
             this.sessionsTab.TabIndex = 1;
-            this.sessionsTab.Text = "Sessions";
+            this.sessionsTab.Text = "会话";
             this.sessionsTab.UseVisualStyleBackColor = true;
             // 
             // sessionsMainPanel
@@ -402,7 +402,7 @@
             // 
             // colSessionProcessName
             // 
-            this.colSessionProcessName.Text = "Processes";
+            this.colSessionProcessName.Text = "进程";
             this.colSessionProcessName.Width = 630;
             // 
             // sessionsLv
@@ -429,32 +429,32 @@
             // 
             // colSessionStarted
             // 
-            this.colSessionStarted.Text = "Started";
+            this.colSessionStarted.Text = "开始时间";
             this.colSessionStarted.Width = 160;
             // 
             // colSessionUser
             // 
-            this.colSessionUser.Text = "User";
+            this.colSessionUser.Text = "用户";
             this.colSessionUser.Width = 120;
             // 
             // colSessionState
             // 
-            this.colSessionState.Text = "State";
+            this.colSessionState.Text = "状态";
             this.colSessionState.Width = 140;
             // 
             // colSessionEnded
             // 
-            this.colSessionEnded.Text = "Ended";
+            this.colSessionEnded.Text = "结束时间";
             this.colSessionEnded.Width = 160;
             // 
             // colSessionAddr
             // 
-            this.colSessionAddr.Text = "IP";
+            this.colSessionAddr.Text = "IP地址";
             this.colSessionAddr.Width = 160;
             // 
             // colWtsSessionId
             // 
-            this.colWtsSessionId.Text = "Session ID";
+            this.colWtsSessionId.Text = "会话ID";
             this.colWtsSessionId.Width = 80;
             // 
             // sessionsContextMenuStrip
@@ -469,7 +469,7 @@
             // 
             this.sessionsShadowMenuItem.Name = "sessionsShadowMenuItem";
             this.sessionsShadowMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.sessionsShadowMenuItem.Text = "Shadow view";
+            this.sessionsShadowMenuItem.Text = "影子查看";
             this.sessionsShadowMenuItem.Click += new System.EventHandler(this.SessionsShadowMenuItem_Click);
             // 
             // sessionsToolstripPanel
@@ -522,8 +522,8 @@
             this.systemProcsBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.systemProcsBtn.Name = "systemProcsBtn";
             this.systemProcsBtn.Size = new System.Drawing.Size(23, 22);
-            this.systemProcsBtn.Text = "Successful connections";
-            this.systemProcsBtn.ToolTipText = "Show / hide system processes";
+            this.systemProcsBtn.Text = "系统进程";
+            this.systemProcsBtn.ToolTipText = "显示/隐藏系统进程";
             this.systemProcsBtn.Click += new System.EventHandler(this.OnSessionsFilterClick);
             // 
             // MainForm
@@ -535,7 +535,7 @@
             this.Name = "MainForm";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "RDP Monitor";
+            this.Text = "RDP监控";
             this.Load += new System.EventHandler(this.OnFormLoad);
             this.tabs.ResumeLayout(false);
             this.connectionsTab.ResumeLayout(false);
