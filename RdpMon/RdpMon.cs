@@ -197,7 +197,7 @@ namespace Cameyo.RdpMon
             }
         }
 
-        public void Aggregate(LiteCollection<Addr> addrTable, EventRecord evt, bool dbg)
+        public void Aggregate(ILiteCollection<Addr> addrTable, EventRecord evt, bool dbg)
         {
             var evtid = evt.Id;
             int ipIndex, userIndex;
@@ -233,7 +233,7 @@ namespace Cameyo.RdpMon
             Aggregate(addrTable, ip, localTime.ToUniversalTime(), success, userName);
         }
 
-        public void Aggregate(LiteCollection<Addr> addrTable, string ip,
+        public void Aggregate(ILiteCollection<Addr> addrTable, string ip,
             DateTime utcTime, bool success, string userName)
         {
             ///if (evttime <= LastStored) // Already added when DB was loaded
@@ -241,7 +241,7 @@ namespace Cameyo.RdpMon
             AggregateMulti(addrTable, ip, success ? 1 : 0, success ? 0 : 1, utcTime, utcTime, new [] { userName });
         }
 
-        private void AggregateMulti(LiteCollection<Addr> addrTable, string ip, 
+        private void AggregateMulti(ILiteCollection<Addr> addrTable, string ip, 
             int successCount, int failCount, DateTime first, DateTime last, IEnumerable<string> userNames)
         {
             var logprefix = "AggregateM(" + ip + "): ";
@@ -289,7 +289,7 @@ namespace Cameyo.RdpMon
             }
         }
 
-        public void Merge(LiteCollection<Addr> addrTable, Addrs newItems)
+        public void Merge(ILiteCollection<Addr> addrTable, Addrs newItems)
         {
             foreach (var newItem in newItems.Items)
             {
