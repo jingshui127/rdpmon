@@ -46,16 +46,20 @@
   <ItemGroup>
     <Reference Include="LiteDB, Version=5.0.21.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
       <HintPath>..\packages\LiteDB.5.0.21\lib\net45\LiteDB.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="NewLife.Core, Version=11.10.2026.101, Culture=neutral, PublicKeyToken=8343210f0b524456, processorArchitecture=MSIL">
       <HintPath>..\packages\NewLife.Core.11.10.2026.101\lib\net462\NewLife.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="NewLife.Remoting, Version=3.7.2026.102, Culture=neutral, PublicKeyToken=8343210f0b524456, processorArchitecture=MSIL">
       <HintPath>..\packages\NewLife.Remoting.3.7.2026.102\lib\net461\NewLife.Remoting.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Stardust, Version=3.6.2026.102, Culture=neutral, PublicKeyToken=8343210f0b524456, processorArchitecture=MSIL">
       <HintPath>..\packages\NewLife.Stardust.3.6.2026.102\lib\net461\Stardust.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -68,14 +72,17 @@
     <Reference Include="System.Management" />
     <Reference Include="System.Memory, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Memory.4.6.3\lib\net462\System.Memory.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Numerics" />
     <Reference Include="System.Numerics.Vectors, Version=4.1.6.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Numerics.Vectors.4.6.1\lib\net462\System.Numerics.Vectors.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Runtime" />
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.1.2\lib\net462\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Web" />
