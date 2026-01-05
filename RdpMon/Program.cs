@@ -1,12 +1,17 @@
-﻿using System;
+﻿using LiteDB;
+using NewLife;
+using NewLife.Log;
+using NewLife.Model;
+using NewLife.Remoting.Clients;
+using Stardust;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Management;
 using System.ServiceProcess;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Management;
-using LiteDB;
 
 namespace Cameyo.RdpMon
 {
@@ -19,7 +24,15 @@ namespace Cameyo.RdpMon
         /// </summary>
         [STAThread]
         static void Main(string[] args)
+
         {
+            XTrace.UseWinForm();
+            MachineInfo.RegisterAsync();
+
+            StartClient();
+
+            var set = ClientSetting.Current;
+
             if (args.Length >= 1 && args[0].Equals("-dbgnow", StringComparison.InvariantCultureIgnoreCase))
             {
                 return;
@@ -153,7 +166,42 @@ namespace Cameyo.RdpMon
                 }
             }
         }
-        
+
+        static StarFactory _factory;
+        static StarClient _Client;
+        private static void StartClient()
+        {
+            var set = ClientSetting.Current;
+            var server = set.Server;
+            if (server.IsNullOrEmpty()) return;
+
+            ;
+
+            XTrace.WriteLine("初始化服务端地址：{0}", server);
+
+            _factory = new StarFactory(server, "RDP监控", null)
+            {
+                Log = XTrace.Log,
+            };
+
+            var client = new StarClient(server)
+            {
+                Code = set.Code,
+                Secret = set.Secret,
+                ProductCode = _factory.AppId,
+                Setting = set,
+
+                Tracer = _factory.Tracer,
+                Log = XTrace.Log,
+            };
+
+            client.Open();
+
+            Host.RegisterExit(() => client.Logout("ApplicationExit"));
+
+            _Client = client;
+        }
+
         static public bool IsSvcInstalled(string svcName, string exeFile, out bool started)
         {
             started = false;

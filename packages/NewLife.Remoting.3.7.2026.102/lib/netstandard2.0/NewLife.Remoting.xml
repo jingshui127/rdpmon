@@ -1,0 +1,2968 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>NewLife.Remoting</name>
+    </assembly>
+    <members>
+        <member name="T:NewLife.Remoting.ApiAction">
+            <summary>Api动作</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiAction.Name">
+            <summary>动作名称</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiAction.Type">
+            <summary>动作所在类型</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiAction.Method">
+            <summary>方法</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiAction.Controller">
+            <summary>控制器对象</summary>
+            <remarks>如果指定控制器对象，则每次调用前不再实例化对象</remarks>
+        </member>
+        <member name="P:NewLife.Remoting.ApiAction.IsPacketParameter">
+            <summary>是否二进制参数</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiAction.IsPacketReturn">
+            <summary>是否二进制返回</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiAction.IsAccessorParameter">
+            <summary>是否Accessor参数</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiAction.IsAccessorReturn">
+            <summary>是否Accessor返回</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiAction.StatProcess">
+            <summary>处理统计</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiAction.LastSession">
+            <summary>最后会话</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiAction.Items">
+            <summary>扩展数据</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiAction.Item(System.String)">
+            <summary>索引器</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ApiAction.#ctor">
+            <summary>实例化</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ApiAction.#ctor(System.Reflection.MethodInfo,System.Type)">
+            <summary>实例化</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ApiAction.GetName(System.Type,System.Reflection.MethodInfo)">
+            <summary>获取名称</summary>
+            <param name="type"></param>
+            <param name="method"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.ApiAction.ToString">
+            <summary>已重载。</summary>
+            <returns></returns>
+        </member>
+        <member name="T:NewLife.Remoting.ApiAttribute">
+            <summary>标识Api</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiAttribute.Name">
+            <summary>名称</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ApiAttribute.#ctor(System.String)">
+            <summary>实例化</summary>
+            <param name="name"></param>
+        </member>
+        <member name="T:NewLife.Remoting.ApiClient">
+            <summary>应用接口客户端</summary>
+            <remarks>
+            保持到服务端直接的长连接RPC通信。
+            常用于向服务端发送请求并接收应答，也可以接收服务端主动发送的单向消息。
+            
+            文档 https://newlifex.com/core/srmp
+            </remarks>
+        </member>
+        <member name="P:NewLife.Remoting.ApiClient.Active">
+            <summary>是否已打开</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiClient.Servers">
+            <summary>服务端地址集合。负载均衡</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiClient.Local">
+            <summary>本地地址。在本地有多个IP时，可以指定使用哪一个IP地址</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiClient.Cluster">
+            <summary>客户端连接集群</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiClient.UsePool">
+            <summary>是否使用连接池。true时建立多个到服务端的连接（高吞吐），默认false使用单一连接（低延迟）</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiClient.Token">
+            <summary>令牌。每次请求携带</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiClient.LastActive">
+            <summary>最后活跃时间</summary>
+        </member>
+        <member name="E:NewLife.Remoting.ApiClient.Received">
+            <summary>收到请求或响应时</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiClient.JsonHost">
+            <summary>Json序列化主机</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiClient.ServiceProvider">
+            <summary>服务提供者。创建控制器实例时使用，可实现依赖注入。务必在注册控制器之前设置该属性</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiClient.StatInvoke">
+            <summary>调用统计</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiClient.RetryPolicy">
+            <summary>重试策略（可选）。默认 null 表示不启用重试</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiClient.MaxRetries">
+            <summary>最大重试次数（不含首次尝试）。默认 0，不重试</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ApiClient.#ctor">
+            <summary>实例化应用接口客户端</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ApiClient.#ctor(System.String)">
+            <summary>实例化应用接口客户端</summary>
+            <param name="uris">服务端地址集合，逗号分隔</param>
+        </member>
+        <member name="M:NewLife.Remoting.ApiClient.Dispose(System.Boolean)">
+            <summary>销毁</summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:NewLife.Remoting.ApiClient.Open">
+            <summary>打开客户端</summary>
+            <remarks>校验 `Servers` 并初始化 `Encoder`/`Cluster`。首次开启统计定时器。</remarks>
+            <returns>已处于打开状态或本次打开返回 true</returns>
+        </member>
+        <member name="M:NewLife.Remoting.ApiClient.Close(System.String)">
+            <summary>关闭</summary>
+            <param name="reason">关闭原因。便于日志分析</param>
+            <remarks>会调用 `Cluster.Close(reason)` 并将 `Active=false`。</remarks>
+        </member>
+        <member name="M:NewLife.Remoting.ApiClient.SetServer(System.String)">
+            <summary>设置服务端地址。如果新地址跟旧地址不同，将会替换旧地址构造的Servers</summary>
+            <param name="uris">服务端地址集合字符串，逗号/分号分隔</param>
+            <remarks>如果已存在集群，调用 `Cluster.Reset()` 以便下次获取连接时生效，尽量平滑切换。</remarks>
+        </member>
+        <member name="M:NewLife.Remoting.ApiClient.InitCluster">
+            <summary>初始化集群</summary>
+            <remarks>根据 `UsePool` 决定单连接或连接池；为 `OnCreate` 提供连接工厂。</remarks>
+            <returns>创建或复用的集群实例</returns>
+        </member>
+        <member name="M:NewLife.Remoting.ApiClient.InvokeAsync``1(System.String,System.Object,System.Threading.CancellationToken)">
+            <summary>异步调用，等待返回结果</summary>
+            <typeparam name="TResult">返回类型</typeparam>
+            <param name="action">服务操作</param>
+            <param name="args">参数</param>
+            <param name="cancellationToken">取消通知</param>
+            <remarks>
+            - 自动确保已 <see cref="M:NewLife.Remoting.ApiClient.Open"/>。
+            - 发送失败若返回 401（Unauthorized），将调用 <see cref="M:NewLife.Remoting.ApiClient.OnLoginAsync(NewLife.Net.ISocketClient,System.Boolean,System.Threading.CancellationToken)"/> 进行一次登录后重发（同一连接）。
+            - 若配置了 <see cref="P:NewLife.Remoting.ApiClient.RetryPolicy"/> 且 <see cref="P:NewLife.Remoting.ApiClient.MaxRetries"/> &gt; 0，则对非 401 的异常按策略进行可选重试（默认不重试）。
+            - 超时会将 <see cref="T:System.Threading.Tasks.TaskCanceledException"/> 截断为短消息："[action]超时[Timeout]取消"。
+            </remarks>
+            <returns>解码后的返回值，或默认值</returns>
+        </member>
+        <member name="M:NewLife.Remoting.ApiClient.Invoke``1(System.String,System.Object)">
+            <summary>同步调用，阻塞等待</summary>
+            <param name="action">服务操作</param>
+            <param name="args">参数</param>
+            <returns>解码后的返回值，或默认值</returns>
+        </member>
+        <member name="M:NewLife.Remoting.ApiClient.InvokeOneWay(System.String,System.Object,System.Byte)">
+            <summary>单向发送。同步调用，不等待返回</summary>
+            <param name="action">服务操作</param>
+            <param name="args">参数</param>
+            <param name="flag">标识</param>
+            <remarks>设置消息 <c>OneWay=true</c>，不等待服务端应答，仅返回底层发送结果码。</remarks>
+            <returns>底层发送结果码，负数表示失败</returns>
+        </member>
+        <member name="M:NewLife.Remoting.ApiClient.InvokeWithClientAsync``1(NewLife.Net.ISocketClient,System.String,System.Object,System.Byte,System.Threading.CancellationToken)">
+            <summary>指定客户端的异步调用，等待返回结果</summary>
+            <remarks>
+            常用于在 <see cref="M:NewLife.Remoting.ApiClient.OnLoginAsync(NewLife.Net.ISocketClient,System.Boolean,System.Threading.CancellationToken)"/> 中实现连接后登录功能。
+            将在 finally 记录超过 <see cref="P:NewLife.Remoting.ApiHost.SlowTrace"/> 的慢调用日志（包含 Action/消息/耗时ms）。
+            </remarks>
+            <typeparam name="TResult">返回类型</typeparam>
+            <param name="client">客户端</param>
+            <param name="action">服务操作</param>
+            <param name="args">参数</param>
+            <param name="flag">标识</param>
+            <param name="cancellationToken">取消通知</param>
+            <returns>解码后的返回值，或默认值</returns>
+        </member>
+        <member name="M:NewLife.Remoting.ApiClient.InvokeWithClient(NewLife.Net.ISocketClient,System.String,System.Object,System.Byte)">
+            <summary>单向调用，不等待返回</summary>
+            <param name="client">客户端</param>
+            <param name="action">服务操作</param>
+            <param name="args">参数</param>
+            <param name="flag">标识</param>
+            <returns>底层发送结果码，负数表示失败</returns>
+        </member>
+        <member name="M:NewLife.Remoting.ApiClient.OnReceive(NewLife.Messaging.IMessage,NewLife.Remoting.ApiReceivedEventArgs)">
+            <summary>客户端收到服务端主动下发消息</summary>
+            <param name="message">原始消息</param>
+            <param name="e">底层接收事件参数</param>
+        </member>
+        <member name="M:NewLife.Remoting.ApiClient.OnNewSession(NewLife.Net.ISocketClient)">
+            <summary>新会话。客户端每次连接或断线重连后，触发自动登录（异步，不阻塞网络线程）</summary>
+            <param name="client">会话</param>
+            <remarks>登录失败会记录错误日志，不影响网络线程继续工作。</remarks>
+        </member>
+        <member name="M:NewLife.Remoting.ApiClient.OnLoginAsync(NewLife.Net.ISocketClient,System.Boolean,System.Threading.CancellationToken)">
+            <summary>连接后自动登录</summary>
+            <param name="client">客户端</param>
+            <param name="force">强制登录</param>
+            <param name="cancellationToken">取消令牌</param>
+            <returns>实现方可返回登录结果，否则返回 null</returns>
+        </member>
+        <member name="M:NewLife.Remoting.ApiClient.LoginAsync(System.Threading.CancellationToken)">
+            <summary>登录</summary>
+            <param name="cancellationToken">取消令牌</param>
+            <returns>实现方可返回登录结果，否则返回 null</returns>
+        </member>
+        <member name="M:NewLife.Remoting.ApiClient.OnCreate(System.String)">
+            <summary>创建客户端之后，打开连接之前</summary>
+            <param name="svr">目标服务端地址</param>
+            <remarks>
+            - WebSocket：清空默认管线并注入 `WebSocketClientCodec`。
+            - 超时：网络层采用消息层的 <see cref="P:NewLife.Remoting.ApiHost.Timeout"/>。
+            - Trace：按日志级别为 Debug 时开启底层 Socket Trace（详见下方注释）。
+            </remarks>
+            <returns>新建并已打开的 <see cref="T:NewLife.Net.ISocketClient"/></returns>
+        </member>
+        <member name="P:NewLife.Remoting.ApiClient.StatPeriod">
+            <summary>显示统计信息的周期。默认600秒，0表示不显示统计信息</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiClient.SocketLog">
+            <summary>Socket层日志</summary>
+        </member>
+        <member name="T:NewLife.Remoting.ApiHost">
+            <summary>Api主机</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiHost.Name">
+            <summary>名称</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiHost.Encoder">
+            <summary>编码器</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiHost.Timeout">
+            <summary>调用超时时间。请求发出后，等待响应的最大时间，默认15_000ms</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiHost.SlowTrace">
+            <summary>慢追踪。远程调用或处理时间超过该值时，输出慢调用日志，默认5000ms</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiHost.Items">
+            <summary>数据项</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiHost.Item(System.String)">
+            <summary>获取/设置 用户会话数据</summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="P:NewLife.Remoting.ApiHost.StartTime">
+            <summary>启动时间</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ApiHost.GetMessageCodec">
+            <summary>获取消息编码器。重载以指定不同的封包协议</summary>
+            <returns></returns>
+        </member>
+        <member name="P:NewLife.Remoting.ApiHost.Log">
+            <summary>日志</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiHost.EncoderLog">
+            <summary>编码器日志</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiHost.ShowError">
+            <summary>显示调用和处理错误。默认false</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiHost.Tracer">
+            <summary>性能跟踪器</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ApiHost.WriteLog(System.String,System.Object[])">
+            <summary>写日志</summary>
+            <param name="format"></param>
+            <param name="args"></param>
+        </member>
+        <member name="M:NewLife.Remoting.ApiHost.ToString">
+            <summary>已重载。返回具有本类特征的字符串</summary>
+            <returns>String</returns>
+        </member>
+        <member name="M:NewLife.Remoting.ApiHttpServer.Init(System.Object,NewLife.Remoting.IApiHost)">
+            <summary>初始化</summary>
+            <param name="config"></param>
+            <param name="host"></param>
+            <returns></returns>
+        </member>
+        <member name="T:NewLife.Remoting.ApiMessage">
+            <summary>Api请求/响应</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiMessage.Action">
+            <summary>动作</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiMessage.Code">
+            <summary>响应码。请求没有该字段</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiMessage.Data">
+            <summary>数据。请求参数或响应内容</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ApiMessage.ToString">
+            <summary>已重载。友好表示该消息</summary>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.ApiMessage.Dispose">
+            <summary>销毁。回收内存到缓冲池</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiNetServer.Host">
+            <summary>主机</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiNetServer.AllSessions">
+            <summary>当前服务器所有会话</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ApiNetServer.Init(System.Object,NewLife.Remoting.IApiHost)">
+            <summary>初始化</summary>
+            <param name="config"></param>
+            <param name="host"></param>
+            <returns></returns>
+        </member>
+        <member name="P:NewLife.Remoting.ApiNetSession.NewLife#Remoting#IApiSession#Host">
+            <summary>主机</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiNetSession.LastActive">
+            <summary>最后活跃时间</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiNetSession.AllSessions">
+            <summary>所有服务器所有会话，包含自己</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiNetSession.Token">
+            <summary>令牌</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ApiNetSession.Start">
+            <summary>开始会话处理</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ApiNetSession.InvokeOneWay(System.String,System.Object,System.Byte)">
+            <summary>单向远程调用，无需等待返回</summary>
+            <param name="action">服务操作</param>
+            <param name="args">参数</param>
+            <param name="flag">标识</param>
+            <returns></returns>
+        </member>
+        <member name="T:NewLife.Remoting.ApiReceivedEventArgs">
+            <summary>收到Api请求或响应的事件参数</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiReceivedEventArgs.Session">
+            <summary>接口会话。服务端特有</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiReceivedEventArgs.Remote">
+            <summary>远程连接。客户端特有</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiReceivedEventArgs.Message">
+            <summary>消息</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiReceivedEventArgs.ApiMessage">
+            <summary>请求响应报文</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiReceivedEventArgs.UserState">
+            <summary>用户状态对象</summary>
+        </member>
+        <member name="T:NewLife.Remoting.ApiServer">
+            <summary>应用接口服务器</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiServer.Active">
+            <summary>是否正在工作</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiServer.Port">
+            <summary>端口</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiServer.Handler">
+            <summary>处理器</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiServer.Server">
+            <summary>服务器</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiServer.Multiplex">
+            <summary>连接复用。默认true，单个Tcp连接在处理某个请求未完成时，可以接收并处理新的请求</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiServer.ReuseAddress">
+            <summary>地址重用，主要应用于网络服务器重启交替。默认false</summary>
+            <remarks>
+            一个端口释放后会等待两分钟之后才能再被使用，SO_REUSEADDR是让端口释放后立即就可以被再次使用。
+            SO_REUSEADDR用于对TCP套接字处于TIME_WAIT状态下的socket(TCP连接中, 先调用close() 的一方会进入TIME_WAIT状态)，才可以重复绑定使用。
+            
+            如果启用，多进程可以共同监听一个端口，都能收到数据，星尘代理多进程监听5500端口测试通过。
+            </remarks>
+        </member>
+        <member name="P:NewLife.Remoting.ApiServer.UseHttpStatus">
+            <summary>是否使用Http状态。默认false，使用json包装响应码</summary>
+        </member>
+        <member name="E:NewLife.Remoting.ApiServer.Received">
+            <summary>收到请求或响应时触发。优先于内部处理</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiServer.ServiceProvider">
+            <summary>服务提供者。创建控制器实例时使用，可实现依赖注入。务必在注册控制器之前设置该属性</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiServer.StatProcess">
+            <summary>处理统计</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ApiServer.#ctor">
+            <summary>实例化一个应用接口服务器</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ApiServer.#ctor(System.Int32)">
+            <summary>使用指定端口实例化网络服务应用接口提供者</summary>
+            <param name="port">端口</param>
+        </member>
+        <member name="M:NewLife.Remoting.ApiServer.#ctor(NewLife.Net.NetUri)">
+            <summary>实例化</summary>
+            <param name="uri">监听地址</param>
+        </member>
+        <member name="M:NewLife.Remoting.ApiServer.Dispose(System.Boolean)">
+            <summary>销毁时停止服务</summary>
+            <param name="disposing">是否由托管代码显示释放</param>
+        </member>
+        <member name="P:NewLife.Remoting.ApiServer.Manager">
+            <summary>接口动作管理器</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ApiServer.Register``1">
+            <summary>注册服务提供类。该类的所有公开方法将直接暴露</summary>
+            <typeparam name="TService">服务控制器类型</typeparam>
+        </member>
+        <member name="M:NewLife.Remoting.ApiServer.Register(System.Object,System.String)">
+            <summary>注册服务</summary>
+            <param name="controller">控制器对象</param>
+            <param name="method">动作名称。为空时遍历控制器所有公有成员方法</param>
+        </member>
+        <member name="M:NewLife.Remoting.ApiServer.ShowService">
+            <summary>显示可用服务</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ApiServer.Use(NewLife.Net.NetUri)">
+            <summary>添加服务器</summary>
+            <param name="uri">监听地址</param>
+            <returns>创建的服务器实例，若初始化失败返回 null</returns>
+        </member>
+        <member name="M:NewLife.Remoting.ApiServer.EnsureCreate">
+            <summary>确保已创建服务器对象</summary>
+            <returns>已存在的服务器或新建的 <see cref="T:NewLife.Remoting.ApiNetServer"/></returns>
+            <exception cref="T:System.ArgumentNullException">未指定 <see cref="P:NewLife.Remoting.ApiServer.Server"/> 且 <see cref="P:NewLife.Remoting.ApiServer.Port"/> 未设置</exception>
+        </member>
+        <member name="M:NewLife.Remoting.ApiServer.Start">
+            <summary>开始服务</summary>
+            <remarks>
+            初始化 <see cref="P:NewLife.Remoting.ApiHost.Encoder"/> 与 <see cref="P:NewLife.Remoting.ApiServer.Handler"/>，创建并启动底层 <see cref="T:NewLife.Remoting.IApiServer"/>。
+            若 <see cref="P:NewLife.Remoting.ApiServer.StatPeriod"/> 大于 0，启动统计定时器输出处理统计与网络状态。
+            </remarks>
+        </member>
+        <member name="M:NewLife.Remoting.ApiServer.Stop(System.String)">
+            <summary>停止服务</summary>
+            <param name="reason">关闭原因。便于日志分析</param>
+            <remarks>停止底层 <see cref="T:NewLife.Remoting.IApiServer"/> 并关闭统计定时器，将 <see cref="P:NewLife.Remoting.ApiServer.Active"/> 置为 false。</remarks>
+        </member>
+        <member name="M:NewLife.Remoting.ApiServer.Process(NewLife.Remoting.IApiSession,NewLife.Messaging.IMessage,System.IServiceProvider)">
+            <summary>处理会话收到的消息，并返回结果消息</summary>
+            <remarks>
+            - 忽略 <c>Reply=true</c> 的消息；
+            - 使用会话级或服务器级 <see cref="T:NewLife.Remoting.IEncoder"/> 解码 <see cref="T:NewLife.Messaging.IMessage"/> 为 <see cref="T:NewLife.Remoting.ApiMessage"/>；
+            - 捕获执行异常并转换为错误码/消息（数据库异常脱敏）；
+            - 单向请求（<c>OneWay=true</c>）不返回响应；
+            - 在 finally 记录超过 <see cref="P:NewLife.Remoting.ApiHost.SlowTrace"/> 的慢处理日志（Action/Code/耗时ms）；
+            - 若 <see cref="P:NewLife.Remoting.ApiServer.UseHttpStatus"/> 为 true，则使用 HTTP 状态码表达结果。
+            </remarks>
+            <param name="session">网络会话</param>
+            <param name="msg">消息</param>
+            <param name="serviceProvider">当前作用域的服务提供者</param>
+            <returns>要应答对方的消息，为空表示不应答</returns>
+        </member>
+        <member name="M:NewLife.Remoting.ApiServer.OnProcess(NewLife.Remoting.IApiSession,System.String,NewLife.Data.IPacket,NewLife.Messaging.IMessage,System.IServiceProvider)">
+            <summary>执行消息处理，交给Handler</summary>
+            <param name="session">会话</param>
+            <param name="action">动作</param>
+            <param name="args">参数</param>
+            <param name="msg">消息</param>
+            <param name="serviceProvider">当前作用域的服务提供者</param>
+            <returns>处理结果；异常将由 <see cref="M:NewLife.Remoting.ApiServer.Process(NewLife.Remoting.IApiSession,NewLife.Messaging.IMessage,System.IServiceProvider)"/> 捕获并转换为错误码</returns>
+        </member>
+        <member name="M:NewLife.Remoting.ApiServer.InvokeAll(System.String,System.Object)">
+            <summary>广播消息给所有会话客户端</summary>
+            <param name="action">服务操作</param>
+            <param name="args">参数</param>
+            <returns>实际广播成功的会话数</returns>
+        </member>
+        <member name="P:NewLife.Remoting.ApiServer.StatPeriod">
+            <summary>显示统计信息的周期。默认600秒，0表示不显示统计信息</summary>
+        </member>
+        <member name="T:NewLife.Remoting.ClientPoolCluster`1">
+            <summary>客户端连接池负载均衡集群</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ClientPoolCluster`1.Name">
+            <summary>名称</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ClientPoolCluster`1.Current">
+            <summary>最后使用资源</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ClientPoolCluster`1.GetItems">
+            <summary>服务器地址列表</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ClientPoolCluster`1.OnCreate">
+            <summary>创建回调</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ClientPoolCluster`1.Pool">
+            <summary>连接池</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ClientPoolCluster`1.#ctor">
+            <summary>实例化连接池集群</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ClientPoolCluster`1.Open">
+            <summary>打开</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ClientPoolCluster`1.Close(System.String)">
+            <summary>关闭</summary>
+            <param name="reason">关闭原因。便于日志分析</param>
+            <returns>是否成功</returns>
+        </member>
+        <member name="M:NewLife.Remoting.ClientPoolCluster`1.Get">
+            <summary>从集群中获取资源</summary>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.ClientPoolCluster`1.Return(`0)">
+            <summary>归还</summary>
+            <param name="value"></param>
+        </member>
+        <member name="M:NewLife.Remoting.ClientPoolCluster`1.Reset">
+            <summary>重置集群。清空已缓存对象</summary>
+        </member>
+        <member name="F:NewLife.Remoting.ClientPoolCluster`1._index">
+            <summary>Round-Robin 负载均衡</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ClientPoolCluster`1.CreateClient">
+            <summary>为连接池创建连接</summary>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.ClientPoolCluster`1.MyPool.OnReturn(`0)">
+            <summary>释放时，返回是否有效。无效对象将会被抛弃</summary>
+            <param name="value"></param>
+        </member>
+        <member name="P:NewLife.Remoting.ClientPoolCluster`1.Log">
+            <summary>日志</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ClientPoolCluster`1.WriteLog(System.String,System.Object[])">
+            <summary>写日志</summary>
+            <param name="format"></param>
+            <param name="args"></param>
+        </member>
+        <member name="T:NewLife.Remoting.Clients.ClientBase">
+            <summary>应用客户端基类。实现对接目标平台的登录、心跳、更新和指令下发等场景操作</summary>
+            <remarks>
+            典型应用架构：
+            1，RPC应用架构
+                客户端ApiClient通过Tcp/Udp等协议连接服务端ApiServer，进行登录、心跳和更新等操作，服务端直接下发指令。
+                例如蚂蚁调度，客户端使用应用编码和密钥登录后，获得令牌，后续无需验证令牌，直到令牌过期，重新登录。
+            2，Http应用架构
+                客户端ApiHttpClient通过Http/Https协议连接服务端WebApi，进行登录、心跳和更新等操作，服务端通过WebSocket下发指令。
+                例如ZeroIot，客户端使用设备编码和密钥登录后，获得令牌，后续每次请求都需要带上令牌，在心跳时维持WebSocket长连接。
+            3，OAuth应用架构
+                客户端ApiHttpClient通过Http/Https协议连接服务端WebApi，进行OAuth登录，获得令牌，后续每次请求都需要带上令牌。
+                例如星尘AppClient，AppId和AppSecret进行OAuth登录后，获得令牌，后续每次请求都需要带上令牌。
+            </remarks>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.ClientBase.Name">
+            <summary>客户端名称。例如Device/Node/App</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.ClientBase.Server">
+            <summary>服务端地址。支持http/tcp/udp，支持客户端负载均衡，多地址逗号分隔</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.ClientBase.Code">
+            <summary>编码。设备编码DeviceCode，或应用标识AppId</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.ClientBase.Secret">
+            <summary>密钥。设备密钥DeviceSecret，或应用密钥AppSecret</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.ClientBase.Timeout">
+            <summary>调用超时时间。请求发出后，等待响应的最大时间，默认15_000ms</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.ClientBase.PasswordProvider">
+            <summary>密码提供者</summary>
+            <remarks>
+            用于保护密码传输，默认提供者为空，密码将明文传输。
+            推荐使用SaltPasswordProvider。
+            </remarks>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.ClientBase.ServiceProvider">
+            <summary>服务提供者</summary>
+            <remarks>借助对象容器，解析各基本接口的请求响应模型</remarks>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.ClientBase.Client">
+            <summary>Api客户端。ApiClient或ApiHttpClient</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.ClientBase.Status">
+            <summary>登录状态</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.ClientBase.Logined">
+            <summary>是否已登录</summary>
+        </member>
+        <member name="E:NewLife.Remoting.Clients.ClientBase.OnLogined">
+            <summary>登录完成后触发</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.ClientBase.Delay">
+            <summary>请求到服务端并返回的延迟时间。单位ms</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.ClientBase.Span">
+            <summary>时间差。服务器时间减去客户端时间</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.ClientBase.MaxFails">
+            <summary>最大失败数。心跳上报失败时进入失败队列，并稍候重试。重试超过该数时，新的数据将被抛弃，默认1440次，约24小时</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.ClientBase.Commands">
+            <summary>命令集合。注册到客户端的命令与委托</summary>
+        </member>
+        <member name="E:NewLife.Remoting.Clients.ClientBase.Received">
+            <summary>收到下行命令时触发</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.ClientBase.Features">
+            <summary>客户端功能特性。默认登录注销心跳，可添加更新等</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.ClientBase.Actions">
+            <summary>各功能的动作集合。记录每一种功能所对应的动作接口路径。</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.ClientBase.JsonHost">
+            <summary>Json主机。提供序列化能力</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.ClientBase.Setting">
+            <summary>客户端设置</summary>
+        </member>
+        <member name="F:NewLife.Remoting.Clients.ClientBase._version">
+            <summary>协议版本</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.#ctor">
+            <summary>实例化</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.#ctor(NewLife.Remoting.Clients.IClientSetting)">
+            <summary>通过客户端设置实例化</summary>
+            <param name="setting"></param>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.Dispose(System.Boolean)">
+            <summary>销毁</summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.SetActions(System.String)">
+            <summary>设置各功能接口路径</summary>
+            <param name="prefix"></param>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.Init">
+            <summary>初始化</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.OnInit">
+            <summary>初始化对象容器以及客户端</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.CreateHttp(System.String)">
+            <summary>创建Http客户端</summary>
+            <param name="urls"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.CreateRpc(System.String)">
+            <summary>创建RPC客户端</summary>
+            <param name="urls"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.OnInvokeAsync``1(System.String,System.Object,System.Threading.CancellationToken)">
+            <summary>异步调用。HTTP默认POST，自动识别GET</summary>
+            <param name="action">动作</param>
+            <param name="args">参数</param>
+            <param name="cancellationToken">取消令牌</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.GetAsync``1(System.String,System.Object,System.Threading.CancellationToken)">
+            <summary>异步Get调用（仅用于HTTP）</summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="action">动作</param>
+            <param name="args">参数</param>
+            <param name="cancellationToken">取消令牌</param>
+            <returns></returns>
+            <exception cref="T:System.NotSupportedException"></exception>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.InvokeAsync``1(System.String,System.Object,System.Threading.CancellationToken)">
+            <summary>[核心接口]远程调用服务端接口，支持重新登录</summary>
+            <remarks>
+            所有对服务端接口的调用，都应该走这个方法，以便统一处理登录、心跳、令牌过期等问题。
+            </remarks>
+            <typeparam name="TResult"></typeparam>
+            <param name="action"></param>
+            <param name="args"></param>
+            <param name="cancellationToken">取消通知</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.Invoke``1(System.String,System.Object)">
+            <summary>同步调用</summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="action"></param>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.SetToken(System.String)">
+            <summary>设置令牌。派生类可重定义逻辑</summary>
+            <param name="token"></param>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.GetNow">
+            <summary>获取相对于服务器的当前时间，本地时区，避免两端时间差</summary>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.Open">
+            <summary>打开连接，尝试登录服务端。在网络未就绪之前反复尝试</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.Login(System.String,System.Threading.CancellationToken)">
+            <summary>登录。使用编码和密钥登录服务端，获取令牌用于后续接口调用</summary>
+            <remarks>
+            支持编码和密钥下发（自动注册）、时间校准。
+            用户可重载Login实现自定义登录逻辑，通过Logined判断是否登录成功。
+            也可以在OnLogined事件中处理登录成功后的逻辑。
+            </remarks>
+            <param name="source">来源。标记从哪里发起登录请求</param>
+            <param name="cancellationToken">取消令牌</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.FixTime(System.Int64,System.Int64)">
+            <summary>计算客户端到服务端的网络延迟，以及相对时间差。支持GetNow()返回基于服务器的当前时间</summary>
+            <param name="startTime"></param>
+            <param name="serverTime"></param>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.BuildLoginRequest">
+            <summary>创建登录请求。支持重载后使用自定义的登录请求对象</summary>
+            <remarks>
+            用户可以重载此方法，返回自定义的登录请求对象，用于支持更多的登录参数。
+            也可以调用基类BuildLoginRequest后得到ClientId和Secret等基本参数，然后填充自己的登录请求对象。
+            还可以直接使用自己的登录请求对象，调用FillLoginRequest填充基本参数。
+            </remarks>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.FillLoginRequest(NewLife.Remoting.Models.ILoginRequest)">
+            <summary>填充登录请求。用户自定义登录时可选调用</summary>
+            <param name="request"></param>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.Logout(System.String,System.Threading.CancellationToken)">
+            <summary>注销。调用服务端注销接口，销毁令牌</summary>
+            <param name="reason">原因</param>
+            <param name="cancellationToken">取消令牌</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.LoginAsync(NewLife.Remoting.Models.ILoginRequest,System.Threading.CancellationToken)">
+            <summary>发起登录异步请求。由Login内部调用</summary>
+            <param name="request">登录请求</param>
+            <param name="cancellationToken">取消令牌</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.LogoutAsync(System.String,System.Threading.CancellationToken)">
+            <summary>发起注销异步请求。由Logout内部调用</summary>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.Ping(System.Threading.CancellationToken)">
+            <summary>心跳。请求服务端心跳接口，上报客户端性能数据的同时，更新其在服务端的最后活跃时间</summary>
+            <remarks>
+            心跳逻辑内部带有失败重试机制，最大失败数MaxFails默认120，超过该数时，新的数据将被抛弃。
+            在网络不可用或者接口请求异常时，会将数据保存到队列，等待网络恢复或者下次心跳时重试。
+            </remarks>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.BuildPingRequest">
+            <summary>创建心跳请求。支持重载后使用自定义的心跳请求对象</summary>
+            <remarks>
+            用户可以重载此方法，返回自定义的心跳请求对象，用于支持更多的心跳参数。
+            也可以调用基类BuildPingRequest后得到基本参数，然后填充自己的心跳请求对象。
+            还可以直接使用自己的心跳请求对象，调用FillPingRequest填充基本参数。
+            </remarks>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.FillPingRequest(NewLife.Remoting.Models.IPingRequest)">
+            <summary>填充心跳请求</summary>
+            <param name="request"></param>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.PingAsync(NewLife.Remoting.Models.IPingRequest,System.Threading.CancellationToken)">
+            <summary>发起心跳异步请求。由Ping内部调用</summary>
+            <param name="request">心跳请求</param>
+            <param name="cancellationToken">取消令牌</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.Upgrade(System.String,System.Threading.CancellationToken)">
+            <summary>获取更新信息。如有更新，则下载解压覆盖并重启应用</summary>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.Restart(NewLife.Remoting.Clients.Upgrade)">
+            <summary>更新完成，重启自己</summary>
+            <param name="upgrade"></param>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.UpgradeAsync(System.String,System.Threading.CancellationToken)">
+            <summary>放弃更新异步请求。由Upgrade内部调用</summary>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.StartTimer">
+            <summary>开始心跳定时器</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.StopTimer">
+            <summary>停止心跳定时器</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.OnPing(System.Object)">
+            <summary>定时心跳。由心跳定时器调用，主要用于维护WebSocket长连接</summary>
+            <param name="state"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.SendAsync(NewLife.Data.IPacket,System.Threading.CancellationToken)">
+            <summary>发送上行消息。借助WebSocket等上行通道</summary>
+            <param name="packet"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <exception cref="T:System.InvalidOperationException"></exception>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.HandleAsync(NewLife.Data.IPacket,NewLife.Messaging.IEventContext,System.Threading.CancellationToken)">
+            <summary>分发消息</summary>
+            <param name="data">数据包</param>
+            <param name="context">事件上下文。用于在发布者、订阅者及中间处理器之间传递协调数据，如 Handler、ClientId 等</param>
+            <param name="cancellationToken">取消通知</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.ReceiveCommand(NewLife.Remoting.Models.CommandModel,System.String,System.String,System.Threading.CancellationToken)">
+            <summary>接收命令，分发调用指定委托</summary>
+            <remarks>
+            命令处理流程中，会对命令进行去重，避免重复执行。
+            其次判断命令是否已经过期，如果已经过期则取消执行。
+            还支持定时执行，延迟执行。
+            </remarks>
+            <param name="model">命令模型</param>
+            <param name="message">原始命令消息</param>
+            <param name="source">来源</param>
+            <param name="cancellationToken">取消令牌</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.OnReceiveCommand(NewLife.Remoting.Models.CommandModel,System.String,System.Threading.CancellationToken)">
+            <summary>触发收到命令的动作</summary>
+            <param name="model">命令</param>
+            <param name="message">原始命令消息</param>
+            <param name="cancellationToken">取消令牌</param>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.SendCommand(System.String,System.String,System.Threading.CancellationToken)">
+            <summary>向命令引擎发送命令，触发指定已注册动作</summary>
+            <param name="command">命令</param>
+            <param name="argument">参数</param>
+            <param name="cancellationToken">取消令牌</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.CommandReply(NewLife.Remoting.Models.CommandReplyModel,System.Threading.CancellationToken)">
+            <summary>上报命令调用结果</summary>
+            <param name="model">命令</param>
+            <param name="cancellationToken">取消令牌</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.PostEvents(NewLife.Remoting.Models.EventModel[])">
+            <summary>批量上报事件</summary>
+            <param name="events"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.WriteEvent(System.String,System.String,System.String)">
+            <summary>写事件</summary>
+            <param name="type"></param>
+            <param name="name"></param>
+            <param name="remark"></param>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.BuildUrl(System.String)">
+            <summary>
+            把Url相对路径格式化为绝对路径。常用于文件下载
+            </summary>
+            <param name="url"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.GetService``1">
+            <summary>从服务提供者（对象容器）创建模型对象</summary>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.ClientBase.Tracer">
+            <summary>链路追踪</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.ClientBase.Log">
+            <summary>日志</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ClientBase.WriteLog(System.String,System.Object[])">
+            <summary>写日志</summary>
+            <param name="format"></param>
+            <param name="args"></param>
+        </member>
+        <member name="T:NewLife.Remoting.Clients.Features">
+            <summary>客户端功能特性</summary>
+        </member>
+        <member name="F:NewLife.Remoting.Clients.Features.Login">
+            <summary>登录</summary>
+        </member>
+        <member name="F:NewLife.Remoting.Clients.Features.Logout">
+            <summary>注销</summary>
+        </member>
+        <member name="F:NewLife.Remoting.Clients.Features.Ping">
+            <summary>心跳</summary>
+        </member>
+        <member name="F:NewLife.Remoting.Clients.Features.Upgrade">
+            <summary>更新</summary>
+        </member>
+        <member name="F:NewLife.Remoting.Clients.Features.Notify">
+            <summary>下行通知</summary>
+        </member>
+        <member name="F:NewLife.Remoting.Clients.Features.CommandReply">
+            <summary>命令响应</summary>
+        </member>
+        <member name="F:NewLife.Remoting.Clients.Features.PostEvent">
+            <summary>上报事件</summary>
+        </member>
+        <member name="F:NewLife.Remoting.Clients.Features.All">
+            <summary>所有</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Clients.IClientSetting">
+            <summary>客户端设置</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.IClientSetting.Server">
+            <summary>服务端地址</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.IClientSetting.Code">
+            <summary>客户端编码</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.IClientSetting.Secret">
+            <summary>客户端密钥</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.IClientSetting.Save">
+            <summary>保存数据</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Clients.ICommandClient">
+            <summary>命令服务接口</summary>
+        </member>
+        <member name="E:NewLife.Remoting.Clients.ICommandClient.Received">
+            <summary>收到命令时触发</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.ICommandClient.Commands">
+            <summary>命令集合</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Clients.CommandClientHelper">
+            <summary>命令客户端助手</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.CommandClientHelper.RegisterCommand(NewLife.Remoting.Clients.ICommandClient,System.String,System.Func{System.String,System.String})">
+            <summary>
+            注册服务。收到平台下发的服务调用时，执行注册的方法
+            </summary>
+            <param name="client">命令客户端</param>
+            <param name="command"></param>
+            <param name="method"></param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.CommandClientHelper.RegisterCommand(NewLife.Remoting.Clients.ICommandClient,System.String,System.Func{System.String,System.Threading.Tasks.Task{System.String}})">
+            <summary>
+            注册服务。收到平台下发的服务调用时，执行注册的方法
+            </summary>
+            <param name="client">命令客户端</param>
+            <param name="command"></param>
+            <param name="method"></param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.CommandClientHelper.RegisterCommand(NewLife.Remoting.Clients.ICommandClient,System.String,System.Func{NewLife.Remoting.Models.CommandModel,NewLife.Remoting.Models.CommandReplyModel})">
+            <summary>
+            注册服务。收到平台下发的服务调用时，执行注册的方法
+            </summary>
+            <param name="client">命令客户端</param>
+            <param name="command"></param>
+            <param name="method"></param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.CommandClientHelper.RegisterCommand(NewLife.Remoting.Clients.ICommandClient,System.String,System.Func{NewLife.Remoting.Models.CommandModel,System.Threading.Tasks.Task{NewLife.Remoting.Models.CommandReplyModel}})">
+            <summary>
+            注册服务。收到平台下发的服务调用时，执行注册的方法
+            </summary>
+            <param name="client">命令客户端</param>
+            <param name="command"></param>
+            <param name="method"></param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.CommandClientHelper.RegisterCommand(NewLife.Remoting.Clients.ICommandClient,System.String,System.Func{NewLife.Remoting.Models.CommandModel,System.Threading.CancellationToken,System.Threading.Tasks.Task{NewLife.Remoting.Models.CommandReplyModel}})">
+            <summary>
+            注册服务。收到平台下发的服务调用时，执行注册的方法
+            </summary>
+            <param name="client">命令客户端</param>
+            <param name="command"></param>
+            <param name="method"></param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.CommandClientHelper.RegisterCommand(NewLife.Remoting.Clients.ICommandClient,System.String,System.Action{NewLife.Remoting.Models.CommandModel})">
+            <summary>
+            注册服务。收到平台下发的服务调用时，执行注册的方法
+            </summary>
+            <param name="client">命令客户端</param>
+            <param name="command"></param>
+            <param name="method"></param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.CommandClientHelper.ExecuteCommand(NewLife.Remoting.Clients.ICommandClient,NewLife.Remoting.Models.CommandModel,System.Threading.CancellationToken)">
+            <summary>执行命令</summary>
+            <param name="client">命令客户端</param>
+            <param name="model">命令模型</param>
+            <param name="cancellationToken">取消令牌</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.CommandClientHelper.OnCommand(NewLife.Remoting.Clients.ICommandClient,NewLife.Remoting.Models.CommandModel,System.Threading.CancellationToken)">
+            <summary>分发执行服务</summary>
+            <param name="client">命令客户端</param>
+            <param name="model">命令模型</param>
+            <param name="cancellationToken">取消令牌</param>
+        </member>
+        <member name="T:NewLife.Remoting.Clients.IEventProvider">
+            <summary>事件客户端</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.IEventProvider.WriteEvent(System.String,System.String,System.String)">
+            <summary>写事件</summary>
+            <param name="type"></param>
+            <param name="name"></param>
+            <param name="remark"></param>
+        </member>
+        <member name="T:NewLife.Remoting.Clients.EventProviderHelper">
+            <summary>事件客户端助手</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.EventProviderHelper.WriteInfoEvent(NewLife.Remoting.Clients.IEventProvider,System.String,System.String)">
+            <summary>写信息事件</summary>
+            <param name="client"></param>
+            <param name="name"></param>
+            <param name="remark"></param>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.EventProviderHelper.WriteErrorEvent(NewLife.Remoting.Clients.IEventProvider,System.String,System.String)">
+            <summary>写错误事件</summary>
+            <param name="client"></param>
+            <param name="name"></param>
+            <param name="remark"></param>
+        </member>
+        <member name="T:NewLife.Remoting.Clients.LoginStatus">
+            <summary>登录状态</summary>
+        </member>
+        <member name="F:NewLife.Remoting.Clients.LoginStatus.Ready">
+            <summary>就绪</summary>
+        </member>
+        <member name="F:NewLife.Remoting.Clients.LoginStatus.LoggingIn">
+            <summary>正在登录</summary>
+        </member>
+        <member name="F:NewLife.Remoting.Clients.LoginStatus.LoggedIn">
+            <summary>已登录</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Clients.ServerTimeProvider">
+            <summary>基于服务器时间差的时间提供者</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.ServerTimeProvider.Client">
+            <summary>客户端</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.ServerTimeProvider.GetUtcNow">
+            <summary>获取UTC时间</summary>
+            <returns></returns>
+        </member>
+        <member name="T:NewLife.Remoting.Clients.Upgrade">
+            <summary>升级更新</summary>
+            <remarks>
+            自动更新的难点在于覆盖正在使用的exe/dll文件，通过改名可以解决。
+            </remarks>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.Upgrade.Name">
+            <summary>名称</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.Upgrade.UpdatePath">
+            <summary>更新目录。默认./Update</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.Upgrade.DestinationPath">
+            <summary>目标目录</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.Upgrade.Url">
+            <summary>源文件下载地址</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.Upgrade.SourceFile">
+            <summary>更新源文件</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.Upgrade.TempPath">
+            <summary>解压缩的临时目录</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.Upgrade.Mode">
+            <summary>更新模式</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.Upgrade.#ctor">
+            <summary>实例化一个升级对象实例，获取当前应用信息</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.Upgrade.Download(System.Threading.CancellationToken)">
+            <summary>开始下载更新</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.Upgrade.CheckFileHash(System.String)">
+            <summary>
+            检查文件散列，避免文件损坏
+            </summary>
+            <param name="hash"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.Upgrade.Extract">
+            <summary>解压缩</summary>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.Upgrade.Update">
+            <summary>执行更新，拷贝文件</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.Upgrade.Run(System.String,System.String)">
+            <summary>启动当前应用的新进程。当前进程退出</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.Upgrade.Run(System.String,System.String,System.Int32)">
+            <summary>启动当前应用的新进程。当前进程退出</summary>
+            <param name="name"></param>
+            <param name="args"></param>
+            <param name="msWait"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.Upgrade.KillSelf">
+            <summary>
+            自杀
+            </summary>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.Upgrade.Run(System.String)">
+            <summary>
+            执行命令，文件名与参数由空格隔开
+            </summary>
+            <param name="cmd"></param>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.Upgrade.Trim(System.String)">
+            <summary>
+            清理不属于当前平台的执行文件
+            </summary>
+            <param name="name"></param>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.Upgrade.DownloadFileAsync(System.Net.Http.HttpClient,System.String,System.String,System.Threading.CancellationToken)">
+            <summary>下载文件</summary>
+            <param name="client">客户端</param>
+            <param name="address">地址</param>
+            <param name="fileName">文件名</param>
+            <param name="cancellationToken">取消令牌</param>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.Upgrade.DeleteBackup(System.String)">
+            <summary>删除备份文件</summary>
+            <param name="dest">目标目录</param>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.Upgrade.CopyAndReplace(System.String,System.String)">
+            <summary>拷贝并替换。正在使用锁定的文件不可删除，但可以改名</summary>
+            <param name="source">源目录</param>
+            <param name="dest">目标目录</param>
+        </member>
+        <member name="P:NewLife.Remoting.Clients.Upgrade.Log">
+            <summary>日志对象</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.Upgrade.WriteLog(System.String,System.Object[])">
+            <summary>输出日志</summary>
+            <param name="format"></param>
+            <param name="args"></param>
+        </member>
+        <member name="T:NewLife.Remoting.Clients.WsChannel">
+            <summary>WebSocket</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.WsChannel.#ctor(NewLife.Remoting.Clients.ClientBase)">
+            <summary>WebSocket</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.WsChannel.OnReceive(NewLife.Data.IPacket,System.Threading.CancellationToken)">
+            <summary>收到服务端主动下发消息。默认转为CommandModel命令处理</summary>
+            <param name="data">数据包</param>
+            <param name="cancellationToken">取消通知</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Clients.WsChannel.SendTextAsync(NewLife.Data.IPacket,System.Threading.CancellationToken)">
+            <summary>发送文本</summary>
+            <param name="data">数据包</param>
+            <param name="cancellationToken">取消通知</param>
+            <returns></returns>
+        </member>
+        <member name="T:NewLife.Remoting.ClientSingleCluster`1">
+            <summary>客户端单连接故障转移集群</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ClientSingleCluster`1.Name">
+            <summary>名称</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ClientSingleCluster`1.Current">
+            <summary>最后使用资源</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ClientSingleCluster`1.GetItems">
+            <summary>服务器地址列表</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ClientSingleCluster`1.OnCreate">
+            <summary>创建回调</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ClientSingleCluster`1.Open">
+            <summary>打开</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ClientSingleCluster`1.Close(System.String)">
+            <summary>关闭</summary>
+            <param name="reason">关闭原因。便于日志分析</param>
+            <returns>是否成功</returns>
+        </member>
+        <member name="M:NewLife.Remoting.ClientSingleCluster`1.Get">
+            <summary>从集群中获取资源</summary>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.ClientSingleCluster`1.Return(`0)">
+            <summary>归还</summary>
+            <param name="value"></param>
+        </member>
+        <member name="M:NewLife.Remoting.ClientSingleCluster`1.Reset">
+            <summary>重置集群。清空已缓存对象</summary>
+        </member>
+        <member name="F:NewLife.Remoting.ClientSingleCluster`1._index">
+            <summary>Round-Robin 故障转移</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ClientSingleCluster`1.CreateClient">
+            <summary>为连接池创建连接</summary>
+            <returns></returns>
+        </member>
+        <member name="P:NewLife.Remoting.ClientSingleCluster`1.Log">
+            <summary>日志</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ClientSingleCluster`1.WriteLog(System.String,System.Object[])">
+            <summary>写日志</summary>
+            <param name="format"></param>
+            <param name="args"></param>
+        </member>
+        <member name="T:NewLife.Remoting.CloudProviders.AliyunClient">
+            <summary>阿里云OpenAPI客户端</summary>
+        </member>
+        <member name="P:NewLife.Remoting.CloudProviders.AliyunClient.Endpoint">
+            <summary>连接点</summary>
+        </member>
+        <member name="P:NewLife.Remoting.CloudProviders.AliyunClient.AccessKeyId">
+            <summary>AK</summary>
+        </member>
+        <member name="P:NewLife.Remoting.CloudProviders.AliyunClient.AccessKeySecret">
+            <summary>密钥</summary>
+        </member>
+        <member name="P:NewLife.Remoting.CloudProviders.AliyunClient.SignatureAlgorithm">
+            <summary>签名算法</summary>
+        </member>
+        <member name="P:NewLife.Remoting.CloudProviders.AliyunClient.SignatureVersion">
+            <summary>签名版本</summary>
+        </member>
+        <member name="P:NewLife.Remoting.CloudProviders.AliyunClient.Version">
+            <summary>版本</summary>
+        </member>
+        <member name="M:NewLife.Remoting.CloudProviders.AliyunClient.#ctor">
+            <summary>构造函数</summary>
+        </member>
+        <member name="M:NewLife.Remoting.CloudProviders.AliyunClient.SendAsync(System.Net.Http.HttpRequestMessage,System.Threading.CancellationToken)">
+            <summary>发送请求。添加服务器</summary>
+            <param name="request"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:NewLife.Remoting.CloudProviders.AliyunClient.BuildRequest(System.Net.Http.HttpMethod,System.String,System.Object,System.Type)">
+            <summary>生成请求</summary>
+            <param name="method"></param>
+            <param name="action"></param>
+            <param name="args"></param>
+            <param name="returnType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.CloudProviders.AliyunClient.CreateCanonicalRequest(System.Net.Http.HttpRequestMessage,System.Collections.Generic.IDictionary{System.String,System.Object},System.Collections.Generic.List{System.String})">
+            <summary>构造规范化请求</summary>
+            <param name="request"></param>
+            <param name="parameters"></param>
+            <param name="signedHeaders"></param>
+            <returns></returns>
+        </member>
+        <member name="T:NewLife.Remoting.ApiController">
+            <summary>API控制器</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiController.Host">
+            <summary>主机</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiController.Session">
+            <summary>会话</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ApiController.GetIps">
+            <summary>
+            获取本地IP地址
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.ApiController.All">
+            <summary>获取所有接口</summary>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.ApiController.Info(System.String)">
+            <summary>服务器信息，用户健康检测</summary>
+            <param name="state">状态信息</param>
+            <returns></returns>
+        </member>
+        <member name="T:NewLife.Remoting.ControllerContext">
+            <summary>控制器上下文</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ControllerContext.Controller">
+            <summary>控制器实例</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ControllerContext.Action">
+            <summary>处理动作</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ControllerContext.ActionName">
+            <summary>真实动作名称</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ControllerContext.Session">
+            <summary>会话</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ControllerContext.Request">
+            <summary>请求</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ControllerContext.Parameters">
+            <summary>请求参数</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ControllerContext.ActionParameters">
+            <summary>获取或设置操作方法参数。</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ControllerContext.Result">
+            <summary>获取或设置由操作方法返回的结果。</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ControllerContext.Exception">
+            <summary>获取或设置在操作方法的执行过程中发生的异常（如果有）。</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ControllerContext.ExceptionHandled">
+            <summary>获取或设置一个值，该值指示是否处理异常。</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ControllerContext.#ctor">
+            <summary>实例化</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ControllerContext.Current">
+            <summary>当前线程上下文</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ControllerContext.Reset">
+            <summary>重置为默认状态</summary>
+        </member>
+        <member name="T:NewLife.Remoting.IActionFilter">
+            <summary>定义操作筛选器中使用的方法。</summary>
+        </member>
+        <member name="M:NewLife.Remoting.IActionFilter.OnActionExecuting(NewLife.Remoting.ControllerContext)">
+            <summary>在执行操作方法之前调用。</summary>
+            <param name="filterContext"></param>
+        </member>
+        <member name="M:NewLife.Remoting.IActionFilter.OnActionExecuted(NewLife.Remoting.ControllerContext)">
+            <summary>在执行操作方法后调用。</summary>
+            <param name="filterContext"></param>
+        </member>
+        <member name="T:NewLife.Remoting.Http.HttpCodec">
+            <summary>Http编解码器</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Http.HttpCodec.AllowParseHeader">
+            <summary>允许分析头部。默认false</summary>
+            <remarks>
+            分析头部对性能有一定损耗
+            </remarks>
+        </member>
+        <member name="P:NewLife.Remoting.Http.HttpCodec.JsonHost">
+            <summary>Json主机。提供序列化能力</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Http.HttpCodec.Write(NewLife.Model.IHandlerContext,System.Object)">
+            <summary>写入数据</summary>
+            <param name="context"></param>
+            <param name="message"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Http.HttpCodec.Read(NewLife.Model.IHandlerContext,System.Object)">
+            <summary>读取数据</summary>
+            <param name="context"></param>
+            <param name="message"></param>
+            <returns></returns>
+        </member>
+        <member name="T:NewLife.Remoting.Http.HttpEncoder">
+            <summary>Http编码器</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Http.HttpEncoder.JsonHost">
+            <summary>Json主机。提供序列化能力</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Http.HttpEncoder.UseHttpStatus">
+            <summary>是否使用Http状态。默认false，使用json包装响应码</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Http.HttpEncoder.Encode(System.String,System.Int32,System.Object)">
+            <summary>编码</summary>
+            <param name="action"></param>
+            <param name="code"></param>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Http.HttpEncoder.DecodeParameters(System.String,NewLife.Data.IPacket,NewLife.Messaging.IMessage)">
+            <summary>解码参数</summary>
+            <param name="action"></param>
+            <param name="data"></param>
+            <param name="msg"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Http.HttpEncoder.DecodeResult(System.String,NewLife.Data.IPacket,NewLife.Messaging.IMessage,System.Type)">
+            <summary>解码结果</summary>
+            <param name="action"></param>
+            <param name="data"></param>
+            <param name="msg">消息</param>
+            <param name="returnType">返回类型</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Http.HttpEncoder.Convert(System.Object,System.Type)">
+            <summary>转换为目标类型</summary>
+            <param name="obj"></param>
+            <param name="targetType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Http.HttpEncoder.CreateRequest(System.String,System.Object)">
+            <summary>创建请求</summary>
+            <param name="action"></param>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Http.HttpEncoder.CreateResponse(NewLife.Messaging.IMessage,System.String,System.Int32,System.Object)">
+            <summary>创建响应</summary>
+            <param name="msg"></param>
+            <param name="action"></param>
+            <param name="code"></param>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Http.HttpEncoder.Decode(NewLife.Messaging.IMessage)">
+            <summary>解码 请求/响应</summary>
+            <param name="msg">消息</param>
+            <returns>请求响应报文</returns>
+        </member>
+        <member name="T:NewLife.Remoting.Http.HttpMessage">
+            <summary>Http消息</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Http.HttpMessage.Reply">
+            <summary>是否响应</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Http.HttpMessage.Error">
+            <summary>是否有错</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Http.HttpMessage.OneWay">
+            <summary>单向请求</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Http.HttpMessage.Header">
+            <summary>头部数据</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Http.HttpMessage.Payload">
+            <summary>负载数据</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Http.HttpMessage.Method">
+            <summary>请求方法</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Http.HttpMessage.Uri">
+            <summary>请求资源</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Http.HttpMessage.ContentLength">
+            <summary>内容长度</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Http.HttpMessage.Headers">
+            <summary>头部集合</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Http.HttpMessage.Dispose">
+            <summary>销毁</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Http.HttpMessage.CreateReply">
+            <summary>根据请求创建配对的响应消息</summary>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Http.HttpMessage.Read(NewLife.Data.IPacket)">
+            <summary>从数据包中读取消息</summary>
+            <param name="pk"></param>
+            <returns>是否成功</returns>
+        </member>
+        <member name="M:NewLife.Remoting.Http.HttpMessage.ParseHeaders">
+            <summary>解码头部</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Http.HttpMessage.ToPacket">
+            <summary>把消息转为封包</summary>
+            <returns></returns>
+        </member>
+        <member name="T:NewLife.Remoting.Http.WebSocketClientCodec">
+            <summary>WebSocket消息编码器</summary>
+            <remarks>参考核心库 WebSocketCodec</remarks>
+        </member>
+        <member name="P:NewLife.Remoting.Http.WebSocketClientCodec.UserPacket">
+            <summary>用户数据包。写入时数据包转消息，读取时消息自动解包返回数据负载</summary>
+            <remarks>一般用于上层还有其它编码器时，实现编码器级联</remarks>
+        </member>
+        <member name="M:NewLife.Remoting.Http.WebSocketClientCodec.Open(NewLife.Model.IHandlerContext)">
+            <summary>打开连接</summary>
+            <param name="context">上下文</param>
+        </member>
+        <member name="M:NewLife.Remoting.Http.WebSocketClientCodec.Close(NewLife.Model.IHandlerContext,System.String)">
+            <summary>连接关闭时，清空粘包编码器</summary>
+            <param name="context"></param>
+            <param name="reason"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Http.WebSocketClientCodec.Read(NewLife.Model.IHandlerContext,System.Object)">
+            <summary>读取数据</summary>
+            <param name="context"></param>
+            <param name="message"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Http.WebSocketClientCodec.Write(NewLife.Model.IHandlerContext,System.Object)">
+            <summary>发送消息时，写入数据</summary>
+            <param name="context"></param>
+            <param name="message"></param>
+            <returns></returns>
+        </member>
+        <member name="T:NewLife.Remoting.Http.WebSocketServerCodec">
+            <summary>WebSocket消息编码器</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Http.WebSocketServerCodec.Server">
+            <summary>服务器名</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Http.WebSocketServerCodec.Version">
+            <summary>版本</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Http.WebSocketServerCodec.Protocol">
+            <summary>协议。如mqtt</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Http.WebSocketServerCodec.Close(NewLife.Model.IHandlerContext,System.String)">
+            <summary>连接关闭时，清空粘包编码器</summary>
+            <param name="context"></param>
+            <param name="reason"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Http.WebSocketServerCodec.Read(NewLife.Model.IHandlerContext,System.Object)">
+            <summary>读取数据</summary>
+            <param name="context"></param>
+            <param name="message"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Http.WebSocketServerCodec.OnHandshake(NewLife.Http.IHttpContext)">
+            <summary>处理 WebSocket 握手请求</summary>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Http.WebSocketServerCodec.Write(NewLife.Model.IHandlerContext,System.Object)">
+            <summary>发送消息时，写入数据</summary>
+            <param name="context"></param>
+            <param name="message"></param>
+            <returns></returns>
+        </member>
+        <member name="T:NewLife.Remoting.IApi">
+            <summary>Api接口</summary>
+            <remarks>
+            在基于令牌Token的无状态验证模式中，可以借助Token重写IApiHandler.Prepare，来达到同一个Token共用相同的IApiSession.Items
+            </remarks>
+        </member>
+        <member name="P:NewLife.Remoting.IApi.Session">
+            <summary>会话</summary>
+        </member>
+        <member name="T:NewLife.Remoting.IApiHandler">
+            <summary>Api处理器</summary>
+        </member>
+        <member name="M:NewLife.Remoting.IApiHandler.Execute(NewLife.Remoting.IApiSession,System.String,System.Object,NewLife.Messaging.IMessage,System.IServiceProvider)">
+            <summary>执行</summary>
+            <param name="session">会话</param>
+            <param name="action">动作</param>
+            <param name="args">参数</param>
+            <param name="msg">消息</param>
+            <param name="serviceProvider">当前作用域的服务提供者</param>
+            <returns></returns>
+        </member>
+        <member name="T:NewLife.Remoting.ApiHandler">
+            <summary>默认处理器</summary>
+            <remarks>
+            在基于令牌Token的无状态验证模式中，可以借助Token重写IApiHandler.Prepare，来达到同一个Token共用相同的IApiSession.Items
+            </remarks>
+        </member>
+        <member name="P:NewLife.Remoting.ApiHandler.Host">
+            <summary>Api接口主机</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ApiHandler.Execute(NewLife.Remoting.IApiSession,System.String,System.Object,NewLife.Messaging.IMessage,System.IServiceProvider)">
+            <summary>执行</summary>
+            <param name="session">会话</param>
+            <param name="action">动作</param>
+            <param name="args">参数</param>
+            <param name="msg">消息</param>
+            <param name="serviceProvider">当前作用域的服务提供者</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.ApiHandler.Prepare(NewLife.Remoting.IApiSession,System.String,System.Object,NewLife.Remoting.ApiAction,NewLife.Messaging.IMessage)">
+            <summary>准备上下文，可以借助Token重写Session会话集合</summary>
+            <param name="session">Api会话</param>
+            <param name="action">接口名</param>
+            <param name="args">参数</param>
+            <param name="api">Api接口</param>
+            <param name="msg">消息内容，辅助数据解析</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.ApiHandler.GetParameterValues(System.Reflection.MethodInfo,System.Collections.Generic.IDictionary{System.String,System.Object},System.Object,System.Object,NewLife.Remoting.IEncoder)">
+            <summary>获取接口方法对应的参数值集合</summary>
+            <param name="method">接口方法</param>
+            <param name="dic">请求参数</param>
+            <param name="raw">原始的请求解码参数</param>
+            <param name="args">原始参数</param>
+            <param name="encoder">编解码器</param>
+            <returns></returns>
+        </member>
+        <member name="T:NewLife.Remoting.TokenApiHandler">
+            <summary>带令牌会话的处理器</summary>
+            <remarks>
+            在基于令牌Token的无状态验证模式中，可以借助Token重写IApiHandler.Prepare，来达到同一个Token共用相同的IApiSession.Items。
+            支持内存缓存和Redis缓存。
+            </remarks>
+        </member>
+        <member name="M:NewLife.Remoting.TokenApiHandler.Prepare(NewLife.Remoting.IApiSession,System.String,System.Object,NewLife.Remoting.ApiAction,NewLife.Messaging.IMessage)">
+            <summary>准备上下文，可以借助Token重写Session会话集合</summary>
+            <param name="session">Api会话</param>
+            <param name="action">接口名</param>
+            <param name="args">参数</param>
+            <param name="api">Api接口</param>
+            <param name="msg">消息内容，辅助数据解析</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.TokenApiHandler.GetKey(System.String)">
+            <summary>根据令牌活期缓存Key</summary>
+            <param name="token"></param>
+            <returns></returns>
+        </member>
+        <member name="T:NewLife.Remoting.IApiHost">
+            <summary>Api主机</summary>
+        </member>
+        <member name="P:NewLife.Remoting.IApiHost.Encoder">
+            <summary>编码器</summary>
+        </member>
+        <member name="M:NewLife.Remoting.IApiHost.GetMessageCodec">
+            <summary>获取消息编码器。重载以指定不同的封包协议</summary>
+            <returns></returns>
+        </member>
+        <member name="T:NewLife.Remoting.IApiManager">
+            <summary>接口管理器</summary>
+        </member>
+        <member name="P:NewLife.Remoting.IApiManager.Services">
+            <summary>可提供服务的方法</summary>
+        </member>
+        <member name="M:NewLife.Remoting.IApiManager.Register``1">
+            <summary>注册服务提供类。该类的所有公开方法将直接暴露</summary>
+            <typeparam name="TService"></typeparam>
+        </member>
+        <member name="M:NewLife.Remoting.IApiManager.Register(System.Object,System.String)">
+            <summary>注册服务</summary>
+            <param name="controller">控制器对象</param>
+            <param name="method">动作名称。为空时遍历控制器所有公有成员方法</param>
+        </member>
+        <member name="M:NewLife.Remoting.IApiManager.Find(System.String)">
+            <summary>查找服务</summary>
+            <param name="action"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.IApiManager.CreateController(NewLife.Remoting.ApiAction,System.IServiceProvider)">
+            <summary>创建控制器实例</summary>
+            <param name="api">Api动作</param>
+            <param name="serviceProvider">服务提供者</param>
+            <returns></returns>
+        </member>
+        <member name="T:NewLife.Remoting.ApiManager">
+            <summary>接口管理器</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ApiManager.#ctor(System.IServiceProvider)">
+            <summary>接口管理器</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ApiManager.Services">
+            <summary>可提供服务的方法</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ApiManager.Register``1">
+            <summary>注册服务提供类。该类的所有公开方法将直接暴露</summary>
+            <typeparam name="TService"></typeparam>
+        </member>
+        <member name="M:NewLife.Remoting.ApiManager.Register(System.Object,System.String)">
+            <summary>注册服务</summary>
+            <param name="controller">控制器对象</param>
+            <param name="method">动作名称。为空时遍历控制器所有公有成员方法</param>
+        </member>
+        <member name="M:NewLife.Remoting.ApiManager.Add(NewLife.Remoting.ApiAction)">
+            <summary>添加服务</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ApiManager.Find(System.String)">
+            <summary>查找服务</summary>
+            <param name="action"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.ApiManager.CreateController(NewLife.Remoting.ApiAction,System.IServiceProvider)">
+            <summary>创建控制器实例</summary>
+            <param name="api">Api动作</param>
+            <param name="serviceProvider2">服务提供者</param>
+            <returns></returns>
+        </member>
+        <member name="T:NewLife.Remoting.IApiServer">
+            <summary>应用接口服务器接口</summary>
+            <remarks>
+            文档 https://newlifex.com/core/srmp
+            </remarks>
+        </member>
+        <member name="P:NewLife.Remoting.IApiServer.Host">
+            <summary>主机</summary>
+        </member>
+        <member name="P:NewLife.Remoting.IApiServer.AllSessions">
+            <summary>当前服务器所有会话</summary>
+        </member>
+        <member name="M:NewLife.Remoting.IApiServer.Init(System.Object,NewLife.Remoting.IApiHost)">
+            <summary>初始化</summary>
+            <param name="config"></param>
+            <param name="host"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.IApiServer.Start">
+            <summary>开始</summary>
+        </member>
+        <member name="M:NewLife.Remoting.IApiServer.Stop(System.String)">
+            <summary>停止</summary>
+            <param name="reason">关闭原因。便于日志分析</param>
+        </member>
+        <member name="P:NewLife.Remoting.IApiServer.Log">
+            <summary>日志</summary>
+        </member>
+        <member name="T:NewLife.Remoting.IApiSession">
+            <summary>Api会话</summary>
+            <remarks>
+            在基于令牌Token的无状态验证模式中，可以借助Token重写IApiHandler.Prepare，来达到同一个Token共用相同的IApiSession.Items
+            </remarks>
+        </member>
+        <member name="P:NewLife.Remoting.IApiSession.Host">
+            <summary>主机</summary>
+        </member>
+        <member name="P:NewLife.Remoting.IApiSession.LastActive">
+            <summary>最后活跃时间</summary>
+        </member>
+        <member name="P:NewLife.Remoting.IApiSession.AllSessions">
+            <summary>所有服务器所有会话，包含自己</summary>
+        </member>
+        <member name="P:NewLife.Remoting.IApiSession.Token">
+            <summary>令牌</summary>
+        </member>
+        <member name="M:NewLife.Remoting.IApiSession.InvokeOneWay(System.String,System.Object,System.Byte)">
+            <summary>单向远程调用，无需等待返回</summary>
+            <param name="action">服务操作</param>
+            <param name="args">参数</param>
+            <param name="flag">标识</param>
+            <returns></returns>
+        </member>
+        <member name="T:NewLife.Remoting.ICluster`2">
+            <summary>集群管理</summary>
+            <typeparam name="TKey"></typeparam>
+            <typeparam name="TValue"></typeparam>
+        </member>
+        <member name="P:NewLife.Remoting.ICluster`2.Current">
+            <summary>最后使用资源</summary>
+        </member>
+        <member name="P:NewLife.Remoting.ICluster`2.GetItems">
+            <summary>资源列表</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ICluster`2.Open">
+            <summary>打开</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ICluster`2.Close(System.String)">
+            <summary>关闭</summary>
+            <param name="reason">关闭原因。便于日志分析</param>
+            <returns>是否成功</returns>
+        </member>
+        <member name="M:NewLife.Remoting.ICluster`2.Get">
+            <summary>从集群中获取资源</summary>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.ICluster`2.Return(`1)">
+            <summary>归还</summary>
+            <param name="value"></param>
+        </member>
+        <member name="M:NewLife.Remoting.ICluster`2.Reset">
+            <summary>重置集群。清空已缓存对象</summary>
+        </member>
+        <member name="T:NewLife.Remoting.ClusterHelper">
+            <summary>集群助手</summary>
+        </member>
+        <member name="M:NewLife.Remoting.ClusterHelper.Invoke``3(NewLife.Remoting.ICluster{``0,``1},System.Func{``1,``2})">
+            <summary>借助集群资源处理事务</summary>
+            <typeparam name="TKey"></typeparam>
+            <typeparam name="TValue"></typeparam>
+            <typeparam name="TResult"></typeparam>
+            <param name="cluster"></param>
+            <param name="func"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.ClusterHelper.InvokeAsync``3(NewLife.Remoting.ICluster{``0,``1},System.Func{``1,System.Threading.Tasks.Task{``2}})">
+            <summary>借助集群资源处理事务</summary>
+            <typeparam name="TKey"></typeparam>
+            <typeparam name="TValue"></typeparam>
+            <typeparam name="TResult"></typeparam>
+            <param name="cluster"></param>
+            <param name="func"></param>
+            <returns></returns>
+        </member>
+        <member name="T:NewLife.Remoting.IEncoder">
+            <summary>编码器</summary>
+        </member>
+        <member name="M:NewLife.Remoting.IEncoder.CreateRequest(System.String,System.Object)">
+            <summary>创建请求</summary>
+            <param name="action"></param>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.IEncoder.CreateResponse(NewLife.Messaging.IMessage,System.String,System.Int32,System.Object)">
+            <summary>创建响应</summary>
+            <param name="msg"></param>
+            <param name="action"></param>
+            <param name="code"></param>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.IEncoder.Decode(NewLife.Messaging.IMessage)">
+            <summary>解码 请求/响应</summary>
+            <param name="msg">消息</param>
+            <returns>请求响应报文</returns>
+        </member>
+        <member name="M:NewLife.Remoting.IEncoder.DecodeParameters(System.String,NewLife.Data.IPacket,NewLife.Messaging.IMessage)">
+            <summary>解码参数</summary>
+            <param name="action">动作</param>
+            <param name="data">数据</param>
+            <param name="msg">消息</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.IEncoder.DecodeResult(System.String,NewLife.Data.IPacket,NewLife.Messaging.IMessage,System.Type)">
+            <summary>解码结果</summary>
+            <param name="action"></param>
+            <param name="data"></param>
+            <param name="msg">消息</param>
+            <param name="returnType">返回类型</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.IEncoder.Convert(System.Object,System.Type)">
+            <summary>转换为目标类型</summary>
+            <param name="obj"></param>
+            <param name="targetType"></param>
+            <returns></returns>
+        </member>
+        <member name="P:NewLife.Remoting.IEncoder.Log">
+            <summary>日志提供者</summary>
+        </member>
+        <member name="T:NewLife.Remoting.EncoderBase">
+            <summary>编码器基类</summary>
+        </member>
+        <member name="M:NewLife.Remoting.EncoderBase.Encode(System.String,System.Nullable{System.Int32},NewLife.Data.IPacket)">
+            <summary>编码。请求/响应</summary>
+            <param name="action"></param>
+            <param name="code"></param>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.EncoderBase.Decode(NewLife.Messaging.IMessage)">
+            <summary>解码 请求/响应</summary>
+            <param name="msg">消息</param>
+            <returns>请求响应报文</returns>
+        </member>
+        <member name="P:NewLife.Remoting.EncoderBase.Log">
+            <summary>日志提供者</summary>
+        </member>
+        <member name="M:NewLife.Remoting.EncoderBase.WriteLog(System.String,System.Object[])">
+            <summary>写日志</summary>
+            <param name="format"></param>
+            <param name="args"></param>
+        </member>
+        <member name="T:NewLife.Remoting.IRetryPolicy">
+            <summary>可插拔的重试策略接口（可选）。默认不启用任何重试。</summary>
+            <remarks>
+            仅当 <see cref="P:NewLife.Remoting.ApiClient.RetryPolicy"/> 不为 null 且 <see cref="P:NewLife.Remoting.ApiClient.MaxRetries"/> 大于 0 时生效。
+            实现方可根据异常类型决定是否重试、重试等待时间，以及是否更换连接。
+            </remarks>
+        </member>
+        <member name="M:NewLife.Remoting.IRetryPolicy.ShouldRetry(System.Exception,System.Int32,System.TimeSpan@,System.Boolean@)">
+            <summary>是否应当重试</summary>
+            <param name="exception">当前异常</param>
+            <param name="attempt">当前重试序号（从1开始，不含首次尝试）</param>
+            <param name="delay">建议等待时长</param>
+            <param name="refreshClient">是否在重试前更换底层连接（Cluster.Return 再 Cluster.Get）</param>
+            <returns>true 表示进行本次重试；false 表示不重试并抛出异常</returns>
+        </member>
+        <member name="T:NewLife.Remoting.JsonEncoder">
+            <summary>Json编码器</summary>
+        </member>
+        <member name="P:NewLife.Remoting.JsonEncoder.JsonHost">
+            <summary>Json主机。提供序列化能力</summary>
+        </member>
+        <member name="M:NewLife.Remoting.JsonEncoder.DecodeParameters(System.String,NewLife.Data.IPacket,NewLife.Messaging.IMessage)">
+            <summary>解码参数</summary>
+            <param name="action">动作</param>
+            <param name="data">数据</param>
+            <param name="msg">消息</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.JsonEncoder.DecodeResult(System.String,NewLife.Data.IPacket,NewLife.Messaging.IMessage,System.Type)">
+            <summary>解码结果</summary>
+            <param name="action"></param>
+            <param name="data"></param>
+            <param name="msg">消息</param>
+            <param name="returnType">返回类型</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.JsonEncoder.Convert(System.Object,System.Type)">
+            <summary>转换为目标类型</summary>
+            <param name="obj"></param>
+            <param name="targetType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.JsonEncoder.CreateRequest(System.String,System.Object)">
+            <summary>创建请求</summary>
+            <param name="action"></param>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.JsonEncoder.CreateResponse(NewLife.Messaging.IMessage,System.String,System.Int32,System.Object)">
+            <summary>创建响应</summary>
+            <param name="msg"></param>
+            <param name="action"></param>
+            <param name="code"></param>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="T:NewLife.Remoting.Models.CommandEventArgs">
+            <summary>命令事件参数</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.CommandEventArgs.Model">
+            <summary>命令</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.CommandEventArgs.Message">
+            <summary>命令原始消息</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.CommandEventArgs.Reply">
+            <summary>响应</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Models.CommandInModel">
+            <summary>平台级发送命令参数模型</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.CommandInModel.Code">
+            <summary>编码。节点编码或应用编码</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.CommandInModel.Command">
+            <summary>命令</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.CommandInModel.Argument">
+            <summary>参数</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.CommandInModel.StartTime">
+            <summary>开始时间。多久之后开始执行，单位秒</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.CommandInModel.Expire">
+            <summary>有效期。多久之后指令过期，单位秒，未指定时表示不限制</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.CommandInModel.Timeout">
+            <summary>超时时间。等待响应的时间，单位秒，未指定时表示不等待</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Models.CommandModel">
+            <summary>命令模型</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.CommandModel.Id">
+            <summary>序号</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.CommandModel.Command">
+            <summary>命令</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.CommandModel.Argument">
+            <summary>参数</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.CommandModel.StartTime">
+            <summary>开始执行时间。用于提前下发指令后延期执行，暂时不支持取消</summary>
+            <remarks>
+            使用UTC时间传输，客户端转本地时间，避免时区差异。
+            有些序列化框架可能不支持带时区信息的序列化，因此约定使用UTC时间传输。
+            </remarks>
+        </member>
+        <member name="P:NewLife.Remoting.Models.CommandModel.Expire">
+            <summary>过期时间。未指定时表示不限制</summary>
+            <remarks>
+            使用UTC时间传输，客户端转本地时间，避免时区差异。
+            有些序列化框架可能不支持带时区信息的序列化，因此约定使用UTC时间传输。
+            </remarks>
+        </member>
+        <member name="P:NewLife.Remoting.Models.CommandModel.TraceId">
+            <summary>跟踪标识。传输traceParent，用于建立全局调用链，便于查找问题</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Models.CommandReplyModel">
+            <summary>命令响应模型</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.CommandReplyModel.Id">
+            <summary>服务编号</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.CommandReplyModel.Status">
+            <summary>状态</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.CommandReplyModel.Data">
+            <summary>返回数据</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Models.CommandStatus">
+            <summary>命令状态</summary>
+        </member>
+        <member name="F:NewLife.Remoting.Models.CommandStatus.就绪">
+            <summary>就绪</summary>
+        </member>
+        <member name="F:NewLife.Remoting.Models.CommandStatus.处理中">
+            <summary>处理中</summary>
+        </member>
+        <member name="F:NewLife.Remoting.Models.CommandStatus.已完成">
+            <summary>已完成</summary>
+        </member>
+        <member name="F:NewLife.Remoting.Models.CommandStatus.取消">
+            <summary>取消</summary>
+        </member>
+        <member name="F:NewLife.Remoting.Models.CommandStatus.错误">
+            <summary>错误</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Models.DeviceContext">
+            <summary>设备上下文。该对象经由池化管理，勿保存</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.DeviceContext.Code">
+            <summary>编码。设备编码或应用AppId，作为JWT的Subject</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.DeviceContext.Device">
+            <summary>设备</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.DeviceContext.Online">
+            <summary>在线信息</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.DeviceContext.Token">
+            <summary>令牌</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.DeviceContext.ClientId">
+            <summary>客户端标识</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.DeviceContext.UserHost">
+            <summary>用户主机</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.DeviceContext.Items">
+            <summary>扩展数据</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.DeviceContext.Item(System.String)">
+            <summary>索引器</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Models.DeviceContext.Clear">
+            <summary>重置</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Models.EventModel">
+            <summary>事件模型</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.EventModel.Time">
+            <summary>发生时间。Unix毫秒（UTC）</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.EventModel.Type">
+            <summary>事件类型。info/alert/error</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.EventModel.Name">
+            <summary>名称。事件名称，例如LightOpen</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.EventModel.Remark">
+            <summary>内容。事件详情</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Models.IAppModel">
+            <summary>应用信息接口</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IAppModel.Name">
+            <summary>名称</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IAppModel.Enable">
+            <summary>启用</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Models.IAppModel.Authorize(System.String,System.String)">
+            <summary>验证授权</summary>
+            <param name="password"></param>
+            <param name="ip"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Models.IAppModel.WriteLog(System.String,System.Boolean,System.String,System.String,System.String)">
+            <summary>写日志</summary>
+            <param name="action"></param>
+            <param name="success"></param>
+            <param name="message"></param>
+            <param name="ip"></param>
+            <param name="clientId"></param>
+        </member>
+        <member name="T:NewLife.Remoting.Models.IAuthenticationSetting">
+            <summary>身份验证设置。用于IPasswordProvider</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IAuthenticationSetting.Algorithm">
+            <summary>身份验证哈希算法。支持md5/sha1/sha512，默认md5</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IAuthenticationSetting.SaltTime">
+            <summary>身份验证盐值时间。使用Unix秒作为盐值，该值为允许的最大时间差。0表示不使用时间盐值，而是使用随机字符串。默认60秒</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Models.IDeviceModel">
+            <summary>设备信息接口</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IDeviceModel.Code">
+            <summary>编码</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IDeviceModel.Name">
+            <summary>名称</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IDeviceModel.Enable">
+            <summary>启用</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Models.IDeviceModel2">
+            <summary>设备信息接口（扩展）</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IDeviceModel2.Secret">
+            <summary>密钥</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IDeviceModel2.Period">
+            <summary>心跳周期</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IDeviceModel2.NewServer">
+            <summary>新服务器地址。用于服务器迁移</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Models.IDeviceModel2.CreateHistory(System.String,System.Boolean,System.String)">
+            <summary>创建设备历史</summary>
+            <param name="action"></param>
+            <param name="success"></param>
+            <param name="content"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Models.IDeviceModel2.CreateOnline(System.String)">
+            <summary>创建在线对象</summary>
+            <param name="sessionId">会话标识</param>
+            <returns></returns>
+        </member>
+        <member name="T:NewLife.Remoting.Models.IOnlineModel">
+            <summary>在线信息接口</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IOnlineModel.SessionId">
+            <summary>会话标识。唯一确定该会话</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Models.IOnlineModel2">
+            <summary>在线信息接口（扩展）</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Models.IOnlineModel2.Save(NewLife.Remoting.Models.IPingRequest,System.Object)">
+            <summary>保存心跳请求信息到在线记录</summary>
+            <param name="request">心跳请求</param>
+            <param name="context">上下文</param>
+        </member>
+        <member name="T:NewLife.Remoting.Models.ITokenSetting">
+            <summary>令牌设置</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.ITokenSetting.TokenSecret">
+            <summary>令牌密钥。用于生成JWT令牌的算法和密钥，如HS256:ABCD1234</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.ITokenSetting.TokenExpire">
+            <summary>令牌有效期。默认2*3600秒</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.ITokenSetting.SessionTimeout">
+            <summary>会话超时。默认600秒</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.ITokenSetting.AutoRegister">
+            <summary>自动注册。允许客户端自动注册，默认true</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Models.LoginEventArgs">
+            <summary>登录事件参数</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Models.LoginEventArgs.#ctor(NewLife.Remoting.Models.ILoginRequest,NewLife.Remoting.Models.ILoginResponse)">
+            <summary>登录事件参数</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.LoginEventArgs.Request">
+            <summary>请求</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.LoginEventArgs.Response">
+            <summary>响应</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Models.ILoginRequest">
+            <summary>登录请求</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.ILoginRequest.Code">
+            <summary>编码</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.ILoginRequest.Secret">
+            <summary>密钥</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.ILoginRequest.ClientId">
+            <summary>实例。应用可能多实例部署，ip@proccessid</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Models.ILoginRequest2">
+            <summary>扩展的登录请求。便于ClientBase填充数据</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.ILoginRequest2.Version">
+            <summary>版本</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.ILoginRequest2.Compile">
+            <summary>编译时间。UTC毫秒</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.ILoginRequest2.IP">
+            <summary>本地IP地址</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.ILoginRequest2.Macs">
+            <summary>MAC地址</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.ILoginRequest2.UUID">
+            <summary>唯一标识</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.ILoginRequest2.Time">
+            <summary>本地时间。UTC毫秒</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Models.LoginRequest">
+            <summary>登录请求</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.LoginRequest.Code">
+            <summary>编码</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.LoginRequest.Secret">
+            <summary>密钥</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.LoginRequest.ClientId">
+            <summary>实例。应用可能多实例部署，ip@proccessid</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.LoginRequest.Version">
+            <summary>版本</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.LoginRequest.Compile">
+            <summary>编译时间。UTC毫秒</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.LoginRequest.IP">
+            <summary>本地IP地址</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.LoginRequest.Macs">
+            <summary>MAC地址</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.LoginRequest.UUID">
+            <summary>唯一标识</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.LoginRequest.Time">
+            <summary>本地时间。UTC毫秒</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Models.ILoginResponse">
+            <summary>登录响应</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.ILoginResponse.Code">
+            <summary>编码。平台下发新编码</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.ILoginResponse.Secret">
+            <summary>密钥。平台下发新密钥</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.ILoginResponse.Token">
+            <summary>令牌</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.ILoginResponse.Expire">
+            <summary>令牌过期时间。单位秒</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.ILoginResponse.Time">
+            <summary>本地时间。客户端用于计算延迟，Unix毫秒（UTC）</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.ILoginResponse.ServerTime">
+            <summary>服务器时间。客户端用于计算时间差，Unix毫秒（UTC）</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Models.LoginResponse">
+            <summary>登录响应</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.LoginResponse.Code">
+            <summary>编码。平台下发新编码</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.LoginResponse.Secret">
+            <summary>密钥。平台下发新密钥</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.LoginResponse.Name">
+            <summary>名称</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.LoginResponse.Token">
+            <summary>令牌</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.LoginResponse.Expire">
+            <summary>令牌过期时间。单位秒</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.LoginResponse.Time">
+            <summary>本地时间。客户端用于计算延迟，Unix毫秒（UTC）</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.LoginResponse.ServerTime">
+            <summary>服务器时间。客户端用于计算时间差，Unix毫秒（UTC）</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Models.LoginResponse.ToString">
+            <summary>已重载。</summary>
+            <returns></returns>
+        </member>
+        <member name="T:NewLife.Remoting.Models.ILogoutResponse">
+            <summary>注销响应</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.ILogoutResponse.Token">
+            <summary>令牌</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Models.LogoutResponse">
+            <summary>注销响应</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.LogoutResponse.Name">
+            <summary>名称</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.LogoutResponse.Token">
+            <summary>令牌</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Models.IPingRequest">
+            <summary>心跳请求</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IPingRequest.Time">
+            <summary>本地UTC时间。Unix毫秒（UTC）</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Models.IPingRequest2">
+            <summary>扩展的心跳请求。便于ClientBase填充数据</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IPingRequest2.Memory">
+            <summary>内存大小</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IPingRequest2.AvailableMemory">
+            <summary>可用内存大小</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IPingRequest2.FreeMemory">
+            <summary>空闲内存大小。在Linux上空闲内存不一定可用，部分作为缓存</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IPingRequest2.TotalSize">
+            <summary>磁盘大小。应用所在盘</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IPingRequest2.AvailableFreeSpace">
+            <summary>磁盘可用空间。应用所在盘</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IPingRequest2.CpuRate">
+            <summary>CPU占用率</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IPingRequest2.Temperature">
+            <summary>温度</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IPingRequest2.Battery">
+            <summary>电量</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IPingRequest2.Signal">
+            <summary>信号强度。WiFi/4G</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IPingRequest2.IP">
+            <summary>本地IP地址。随着网卡变动，可能改变</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IPingRequest2.Uptime">
+            <summary>开机时间，单位s</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IPingRequest2.Delay">
+            <summary>延迟。请求到服务端并返回的延迟时间。单位ms</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Models.PingRequest">
+            <summary>心跳请求</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.PingRequest.Memory">
+            <summary>内存大小</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.PingRequest.AvailableMemory">
+            <summary>可用内存大小</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.PingRequest.FreeMemory">
+            <summary>空闲内存大小。在Linux上空闲内存不一定可用，部分作为缓存</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.PingRequest.TotalSize">
+            <summary>磁盘大小。应用所在盘</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.PingRequest.AvailableFreeSpace">
+            <summary>磁盘可用空间。应用所在盘</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.PingRequest.CpuRate">
+            <summary>CPU占用率</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.PingRequest.Temperature">
+            <summary>温度</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.PingRequest.Battery">
+            <summary>电量</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.PingRequest.Signal">
+            <summary>信号强度。WiFi/4G</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.PingRequest.UplinkSpeed">
+            <summary>上行速度。网络发送速度，字节每秒</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.PingRequest.DownlinkSpeed">
+            <summary>下行速度。网络接收速度，字节每秒</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.PingRequest.IP">
+            <summary>本地IP地址。随着网卡变动，可能改变</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.PingRequest.Uptime">
+            <summary>开机时间，单位s</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.PingRequest.Time">
+            <summary>本地UTC时间。Unix毫秒（UTC）</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.PingRequest.Delay">
+            <summary>延迟。请求到服务端并返回的延迟时间。单位ms</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Models.IPingResponse">
+            <summary>心跳响应</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IPingResponse.Time">
+            <summary>本地时间。客户端用于计算延迟，Unix毫秒（UTC）</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IPingResponse.ServerTime">
+            <summary>服务器时间。Unix毫秒（UTC）</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IPingResponse.Period">
+            <summary>心跳周期。单位秒</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IPingResponse.Token">
+            <summary>令牌。现有令牌即将过期时，颁发新的令牌</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Models.IPingResponse2">
+            <summary>扩展的心跳响应</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IPingResponse2.NewServer">
+            <summary>新服务器地址。用于服务器迁移</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IPingResponse2.Commands">
+            <summary>下发命令</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Models.PingResponse">
+            <summary>心跳响应</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.PingResponse.Time">
+            <summary>本地时间。客户端用于计算延迟，Unix毫秒（UTC）</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.PingResponse.ServerTime">
+            <summary>服务器时间。Unix毫秒（UTC）</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.PingResponse.Period">
+            <summary>心跳周期。单位秒</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.PingResponse.Token">
+            <summary>令牌。现有令牌即将过期时，颁发新的令牌</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.PingResponse.NewServer">
+            <summary>新服务器地址。用于服务器迁移</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.PingResponse.Commands">
+            <summary>下发命令</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Models.UpdateModes">
+            <summary>更新模式。发布或更新时覆盖目标文件的模式</summary>
+        </member>
+        <member name="F:NewLife.Remoting.Models.UpdateModes.Default">
+            <summary>默认</summary>
+        </member>
+        <member name="F:NewLife.Remoting.Models.UpdateModes.Partial">
+            <summary>部分包。覆盖已有文件，保留其它文件</summary>
+        </member>
+        <member name="F:NewLife.Remoting.Models.UpdateModes.Standard">
+            <summary>标准包。清空所有可执行文件，保留配置和数据等其它文件</summary>
+        </member>
+        <member name="F:NewLife.Remoting.Models.UpdateModes.Full">
+            <summary>完整包。清空所有文件</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Models.IUpgradeInfo">
+            <summary>更新响应</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IUpgradeInfo.Version">
+            <summary>版本号</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IUpgradeInfo.Source">
+            <summary>更新源，Url地址</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IUpgradeInfo.FileHash">
+            <summary>文件哈希</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Models.IUpgradeInfo2">
+            <summary>扩展的更新响应</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IUpgradeInfo2.Preinstall">
+            <summary>更新前要执行的命令。解压缩后，在解压缩目录执行</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IUpgradeInfo2.Executor">
+            <summary>更新后要执行的命令</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.IUpgradeInfo2.Force">
+            <summary>是否强制更新，覆盖文件后即刻重启应用，不需要用户同意</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Models.UpgradeInfo">
+            <summary>更新响应</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.UpgradeInfo.Version">
+            <summary>版本号</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.UpgradeInfo.Source">
+            <summary>更新源，Url地址</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.UpgradeInfo.FileHash">
+            <summary>文件哈希</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.UpgradeInfo.FileSize">
+            <summary>文件大小</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.UpgradeInfo.Preinstall">
+            <summary>更新前要执行的命令。解压缩后，在解压缩目录执行</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.UpgradeInfo.Executor">
+            <summary>更新后要执行的命令</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.UpgradeInfo.Force">
+            <summary>是否强制更新，覆盖文件后即刻重启应用，不需要用户同意</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Models.UpgradeInfo.Description">
+            <summary>描述</summary>
+        </member>
+        <member name="T:NewLife.Remoting.RemotingExtensions">
+            <summary>扩展方法</summary>
+        </member>
+        <member name="M:NewLife.Remoting.RemotingExtensions.BuildCode(NewLife.MachineInfo,System.String)">
+            <summary>生成设备代码</summary>
+            <param name="machineInfo"></param>
+            <param name="formula"></param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.ArgumentOutOfRangeException"></exception>
+        </member>
+        <member name="T:NewLife.Remoting.Services.CommandSession">
+            <summary>命令会话基类。管理单个客户端连接的会话状态，处理服务端下发的命令</summary>
+            <remarks>
+            命令会话是服务端与客户端之间的通信桥梁，每个客户端连接对应一个会话实例。
+            
+            <para>核心职责：</para>
+            <list type="bullet">
+            <item>维护会话标识（Code），用于识别命令归属的客户端</item>
+            <item>跟踪会话活跃状态，支持会话管理器定期清理不活跃会话</item>
+            <item>处理服务端下发的命令，将命令转发给客户端</item>
+            <item>管理客户端在线/离线状态回调</item>
+            </list>
+            
+            <para>派生类实现：</para>
+            <list type="bullet">
+            <item><see cref="!:WsCommandSession"/>：WebSocket 会话实现，通过 WebSocket 长连接与客户端通信</item>
+            </list>
+            
+            <para>使用场景：</para>
+            配合 <see cref="T:NewLife.Remoting.Services.ISessionManager"/> 使用，由会话管理器统一管理会话的生命周期。
+            </remarks>
+        </member>
+        <member name="P:NewLife.Remoting.Services.CommandSession.Code">
+            <summary>会话编码。用于唯一标识客户端，作为命令分发的路由键</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Services.CommandSession.Active">
+            <summary>是否活动中。用于判断会话是否有效，派生类应重写此属性以反映实际连接状态</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Services.CommandSession.Log">
+            <summary>日志提供者。用于记录会话相关日志</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Services.CommandSession.SetOnline">
+            <summary>在线状态回调。会话上线或下线时触发，参数为 true 表示上线，false 表示下线</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Services.CommandSession.Tracer">
+            <summary>链路追踪器。用于记录分布式调用链</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Services.CommandSession.HandleAsync(NewLife.Remoting.Models.CommandModel,System.String,System.Threading.CancellationToken)">
+            <summary>处理服务端下发的命令。派生类应重写此方法实现具体的命令发送逻辑</summary>
+            <param name="command">命令模型，包含命令名称、参数等信息</param>
+            <param name="message">原始命令消息的 JSON 字符串，可直接发送给客户端</param>
+            <param name="cancellationToken">取消令牌</param>
+            <returns></returns>
+        </member>
+        <member name="T:NewLife.Remoting.Services.IDeviceService">
+            <summary>设备会话服务</summary>
+            <remarks>
+            星尘的Node节点；IoT的Device设备；
+            </remarks>
+        </member>
+        <member name="M:NewLife.Remoting.Services.IDeviceService.QueryDevice(System.String)">
+            <summary>查找设备</summary>
+            <param name="code">编码</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Services.IDeviceService.Login(NewLife.Remoting.Models.DeviceContext,NewLife.Remoting.Models.ILoginRequest,System.String)">
+            <summary>设备登录</summary>
+            <param name="context">上下文</param>
+            <param name="request">登录请求</param>
+            <param name="source">来源，如Http/Mqtt</param>
+            <returns>返回响应</returns>
+        </member>
+        <member name="M:NewLife.Remoting.Services.IDeviceService.Logout(NewLife.Remoting.Models.DeviceContext,System.String,System.String)">
+            <summary>设备注销</summary>
+            <param name="context">上下文</param>
+            <param name="reason">注销原因</param>
+            <param name="source">登录来源</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Services.IDeviceService.Ping(NewLife.Remoting.Models.DeviceContext,NewLife.Remoting.Models.IPingRequest,NewLife.Remoting.Models.IPingResponse)">
+            <summary>设备心跳。更新在线记录信息</summary>
+            <param name="context">上下文</param>
+            <param name="request">心跳请求</param>
+            <param name="response">心跳响应。如果未传入则内部实例化</param>
+            <returns>心跳响应</returns>
+        </member>
+        <member name="M:NewLife.Remoting.Services.IDeviceService.SetOnline(NewLife.Remoting.Models.DeviceContext,System.Boolean)">
+            <summary>设置设备的长连接上线/下线</summary>
+            <param name="context">上下文</param>
+            <param name="online">上线/下线</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Services.IDeviceService.SendCommand(NewLife.Remoting.Models.IDeviceModel,NewLife.Remoting.Models.CommandModel,System.Threading.CancellationToken)">
+            <summary>发送命令。内部调用</summary>
+            <param name="device">设备</param>
+            <param name="command">命令</param>
+            <param name="cancellationToken">取消令牌</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Services.IDeviceService.SendCommand(NewLife.Remoting.Models.DeviceContext,NewLife.Remoting.Models.CommandInModel,System.Threading.CancellationToken)">
+            <summary>发送命令。外部平台级接口调用</summary>
+            <param name="context">上下文</param>
+            <param name="model">命令</param>
+            <param name="cancellationToken">取消令牌</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Services.IDeviceService.CommandReply(NewLife.Remoting.Models.DeviceContext,NewLife.Remoting.Models.CommandReplyModel)">
+            <summary>命令响应</summary>
+            <param name="context">上下文</param>
+            <param name="model">响应模型</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Services.IDeviceService.PostEvents(NewLife.Remoting.Models.DeviceContext,NewLife.Remoting.Models.EventModel[])">
+            <summary>上报事件</summary>
+            <param name="context">上下文</param>
+            <param name="events">事件集合</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Services.IDeviceService.Upgrade(NewLife.Remoting.Models.DeviceContext,System.String)">
+            <summary>升级检查</summary>
+            <param name="context">上下文</param>
+            <param name="channel">更新通道</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Services.IDeviceService.WriteHistory(NewLife.Remoting.Models.DeviceContext,System.String,System.Boolean,System.String)">
+            <summary>写设备历史</summary>
+            <param name="context">上下文</param>
+            <param name="action">动作</param>
+            <param name="success">成功</param>
+            <param name="remark">备注内容</param>
+        </member>
+        <member name="T:NewLife.Remoting.Services.IDeviceService2">
+            <summary>设备会话服务（扩展）</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Services.IDeviceService2.Authorize(NewLife.Remoting.Models.DeviceContext,NewLife.Remoting.Models.ILoginRequest)">
+            <summary>验证设备合法性。验证密钥</summary>
+            <param name="context">上下文</param>
+            <param name="request">登录请求</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Services.IDeviceService2.Register(NewLife.Remoting.Models.DeviceContext,NewLife.Remoting.Models.ILoginRequest)">
+            <summary>自动注册设备。验证密钥失败后</summary>
+            <param name="context">上下文</param>
+            <param name="request">登录请求</param>
+            <returns></returns>
+            <exception cref="T:NewLife.Remoting.ApiException"></exception>
+        </member>
+        <member name="M:NewLife.Remoting.Services.IDeviceService2.OnLogin(NewLife.Remoting.Models.DeviceContext,NewLife.Remoting.Models.ILoginRequest)">
+            <summary>鉴权后的登录处理。修改设备信息、创建在线记录和写日志</summary>
+            <param name="context">上下文</param>
+            <param name="request">登录请求</param>
+        </member>
+        <member name="M:NewLife.Remoting.Services.IDeviceService2.GetDevice(System.String)">
+            <summary>获取设备。先查缓存再查库</summary>
+            <param name="code">设备编码</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Services.IDeviceService2.OnPing(NewLife.Remoting.Models.DeviceContext,NewLife.Remoting.Models.IPingRequest)">
+            <summary>设备心跳。更新在线记录信息</summary>
+            <param name="context">上下文</param>
+            <param name="request">心跳请求</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Services.IDeviceService2.QueryOnline(System.String)">
+            <summary>查找在线</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Services.IDeviceService2.GetOnline(NewLife.Remoting.Models.DeviceContext)">
+            <summary>获取在线。先查缓存再查库</summary>
+            <param name="context">上下文</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Services.IDeviceService2.CreateOnline(NewLife.Remoting.Models.DeviceContext)">
+            <summary>创建在线。先写数据库再写缓存</summary>
+            <param name="context">上下文</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Services.IDeviceService2.RemoveOnline(NewLife.Remoting.Models.DeviceContext)">
+            <summary>删除在线。先删数据库再删缓存</summary>
+            <param name="context">上下文</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Services.IDeviceService2.AcquireCommands(NewLife.Remoting.Models.DeviceContext)">
+            <summary>获取下行命令</summary>
+            <param name="context">上下文</param>
+            <returns></returns>
+        </member>
+        <member name="T:NewLife.Remoting.Services.DeviceServiceExtensions">
+            <summary>设备服务扩展</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Services.DeviceServiceExtensions.WriteHistory(NewLife.Remoting.Services.IDeviceService,NewLife.Remoting.Models.IDeviceModel,System.String,System.Boolean,System.String,System.String,System.String)">
+            <summary>写设备历史</summary>
+            <param name="deviceService">设备服务</param>
+            <param name="device">设备</param>
+            <param name="action">动作</param>
+            <param name="success">成功</param>
+            <param name="remark">备注内容</param>
+            <param name="clientId">客户端标识</param>
+            <param name="ip">远程IP</param>
+        </member>
+        <member name="T:NewLife.Remoting.Services.ICommandSession">
+            <summary>命令会话</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Services.ICommandSession.Code">
+            <summary>会话编码。用于识别指令归属</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Services.ICommandSession.Active">
+            <summary>是否活动中</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Services.ICommandSession.HandleAsync(NewLife.Remoting.Models.CommandModel,System.String,System.Threading.CancellationToken)">
+            <summary>处理事件</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Services.ISessionManager">
+            <summary>会话管理器接口</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Services.ISessionManager.Add(NewLife.Remoting.Services.ICommandSession)">
+            <summary>添加会话</summary>
+            <param name="session"></param>
+        </member>
+        <member name="M:NewLife.Remoting.Services.ISessionManager.Remove(NewLife.Remoting.Services.ICommandSession)">
+            <summary>删除会话</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Services.ISessionManager.Get(System.String)">
+            <summary>获取会话</summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Services.ISessionManager.PublishAsync(System.String,NewLife.Remoting.Models.CommandModel,System.String,System.Threading.CancellationToken)">
+            <summary>向目标会话发送事件。进程内转发，或通过Redis队列</summary>
+            <param name="code">设备编码</param>
+            <param name="command">命令模型</param>
+            <param name="message">原始命令消息</param>
+            <param name="cancellationToken">取消令牌</param>
+            <returns></returns>
+        </member>
+        <member name="T:NewLife.Remoting.Services.ITokenService">
+            <summary>令牌服务。颁发与验证令牌</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Services.ITokenService.IssueToken(System.String,System.String)">
+            <summary>颁发令牌（使用ITokenSetting中的密钥）</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Services.ITokenService.DecodeToken(System.String)">
+            <summary>验证令牌</summary>
+        </member>
+        <member name="T:NewLife.Remoting.Services.SessionManager">
+            <summary>会话管理器。管理命令会话的生命周期，支持进程内或跨进程（Redis队列）消息分发</summary>
+            <remarks>
+            主要用于管理 WebSocket 等长连接会话（如 <see cref="T:NewLife.Remoting.Services.CommandSession"/>），实现服务端向客户端下发命令的能力。
+            
+            <para>核心工作流程：</para>
+            <list type="number">
+            <item>客户端建立连接时，调用 <see cref="M:NewLife.Remoting.Services.SessionManager.Add(NewLife.Remoting.Services.ICommandSession)"/> 将会话加入管理器，以 Code 为唯一标识</item>
+            <item>服务端需要下发命令时，调用 <see cref="M:NewLife.Remoting.Services.SessionManager.PublishAsync(System.String,NewLife.Remoting.Models.CommandModel,System.String,System.Threading.CancellationToken)"/> 发布消息到事件总线</item>
+            <item>事件总线触发 <see cref="M:NewLife.Remoting.Services.SessionManager.OnMessage(System.String,NewLife.Messaging.IEventContext,System.Threading.CancellationToken)"/>，根据 Code 找到对应会话并交由其处理（如通过 WebSocket 发送给客户端）</item>
+            <item>客户端断开连接时，调用 <see cref="M:NewLife.Remoting.Services.SessionManager.Remove(NewLife.Remoting.Services.ICommandSession)"/> 从管理器移除会话</item>
+            <item>内置定时器自动清理不活跃的会话</item>
+            </list>
+            
+            <para>事件总线模式：</para>
+            <list type="bullet">
+            <item>单机模式：使用内存事件总线 <see cref="T:NewLife.Messaging.EventBus`1"/>，仅支持进程内消息分发</item>
+            <item>集群模式：使用 Redis 事件总线，支持跨进程消息分发，适用于多实例部署场景</item>
+            </list>
+            
+            <para>消息格式：</para>
+            实际发送的消息格式为 "code#message"，其中 code 为会话标识，message 为 JSON 序列化的命令内容，因此 code 内不能包含 # 字符。
+            </remarks>
+        </member>
+        <member name="M:NewLife.Remoting.Services.SessionManager.#ctor(System.IServiceProvider)">
+            <summary>会话管理器。管理命令会话的生命周期，支持进程内或跨进程（Redis队列）消息分发</summary>
+            <remarks>
+            主要用于管理 WebSocket 等长连接会话（如 <see cref="T:NewLife.Remoting.Services.CommandSession"/>），实现服务端向客户端下发命令的能力。
+            
+            <para>核心工作流程：</para>
+            <list type="number">
+            <item>客户端建立连接时，调用 <see cref="M:NewLife.Remoting.Services.SessionManager.Add(NewLife.Remoting.Services.ICommandSession)"/> 将会话加入管理器，以 Code 为唯一标识</item>
+            <item>服务端需要下发命令时，调用 <see cref="M:NewLife.Remoting.Services.SessionManager.PublishAsync(System.String,NewLife.Remoting.Models.CommandModel,System.String,System.Threading.CancellationToken)"/> 发布消息到事件总线</item>
+            <item>事件总线触发 <see cref="M:NewLife.Remoting.Services.SessionManager.OnMessage(System.String,NewLife.Messaging.IEventContext,System.Threading.CancellationToken)"/>，根据 Code 找到对应会话并交由其处理（如通过 WebSocket 发送给客户端）</item>
+            <item>客户端断开连接时，调用 <see cref="M:NewLife.Remoting.Services.SessionManager.Remove(NewLife.Remoting.Services.ICommandSession)"/> 从管理器移除会话</item>
+            <item>内置定时器自动清理不活跃的会话</item>
+            </list>
+            
+            <para>事件总线模式：</para>
+            <list type="bullet">
+            <item>单机模式：使用内存事件总线 <see cref="T:NewLife.Messaging.EventBus`1"/>，仅支持进程内消息分发</item>
+            <item>集群模式：使用 Redis 事件总线，支持跨进程消息分发，适用于多实例部署场景</item>
+            </list>
+            
+            <para>消息格式：</para>
+            实际发送的消息格式为 "code#message"，其中 code 为会话标识，message 为 JSON 序列化的命令内容，因此 code 内不能包含 # 字符。
+            </remarks>
+        </member>
+        <member name="P:NewLife.Remoting.Services.SessionManager.Topic">
+            <summary>主题。事件总线的队列名称，默认 Commands</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Services.SessionManager.ClientId">
+            <summary>客户端标识。机器名+进程号</summary>
+            <remarks>在事件总线中，用做 Redis 队列的消费组标识，用于区分不同进程实例</remarks>
+        </member>
+        <member name="P:NewLife.Remoting.Services.SessionManager.Bus">
+            <summary>事件总线。用于跨进程消息分发，单机模式使用内存总线，集群模式使用 Redis 总线</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Services.SessionManager.ClearPeriod">
+            <summary>清理周期。单位秒，默认10秒。定时清理不活跃的会话</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Services.SessionManager.Sessions">
+            <summary>会话集合。以 Code 为键的并发字典</summary>
+        </member>
+        <member name="P:NewLife.Remoting.Services.SessionManager.Factory">
+            <summary>事件总线工厂</summary>
+        </member>
+        <member name="F:NewLife.Remoting.Services.SessionManager._clearTimer">
+            <summary>清理会话计时器</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Services.SessionManager.Dispose(System.Boolean)">
+            <summary>销毁</summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:NewLife.Remoting.Services.SessionManager.Init">
+            <summary>初始化事件总线。延迟初始化，首次添加会话或发布消息时触发</summary>
+        </member>
+        <member name="M:NewLife.Remoting.Services.SessionManager.Create">
+            <summary>创建事件总线，用于转发会话消息</summary>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Services.SessionManager.Add(NewLife.Remoting.Services.ICommandSession)">
+            <summary>添加会话到管理器</summary>
+            <param name="session">命令会话</param>
+        </member>
+        <member name="M:NewLife.Remoting.Services.SessionManager.Remove(NewLife.Remoting.Services.ICommandSession)">
+            <summary>从管理器删除会话</summary>
+            <param name="session">命令会话</param>
+        </member>
+        <member name="M:NewLife.Remoting.Services.SessionManager.PublishAsync(System.String,NewLife.Remoting.Models.CommandModel,System.String,System.Threading.CancellationToken)">
+            <summary>向目标会话发送事件。进程内转发，或通过Redis队列</summary>
+            <remarks>实际发送的消息是 code#message，因此code内不能带有#</remarks>
+            <param name="code">设备编码</param>
+            <param name="command">命令模型</param>
+            <param name="message">原始命令消息</param>
+            <param name="cancellationToken">取消令牌</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Services.SessionManager.OnMessage(System.String,NewLife.Messaging.IEventContext,System.Threading.CancellationToken)">
+            <summary>从事件总线收到事件</summary>
+            <remarks>实际发送消息是 code#message，因此需要先解码消息找到code</remarks>
+            <param name="message">原始命令消息</param>
+            <param name="context">事件上下文。用于在发布者、订阅者及中间处理器之间传递协调数据，如 Handler、ClientId 等</param>
+            <param name="cancellationToken">取消令牌</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Services.SessionManager.Get(System.String)">
+            <summary>根据标识获取会话</summary>
+            <param name="key">会话标识（Code）</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.Services.SessionManager.CloseAll(System.String)">
+            <summary>关闭所有会话并释放资源</summary>
+            <param name="reason">关闭原因</param>
+        </member>
+        <member name="M:NewLife.Remoting.Services.SessionManager.RemoveNotAlive(System.Object)">
+            <summary>移除不活动的会话</summary>
+        </member>
+        <member name="T:NewLife.Remoting.WsClient">
+            <summary>Websocket版应用接口客户端</summary>
+            <remarks>
+            保持到服务端直接的长连接RPC通信。
+            常用于向服务端发送请求并接收应答，也可以接收服务端主动发送的单向消息。
+            
+            文档 https://newlifex.com/core/srmp
+            </remarks>
+        </member>
+        <member name="P:NewLife.Remoting.WsClient.Active">
+            <summary>是否已打开</summary>
+        </member>
+        <member name="P:NewLife.Remoting.WsClient.Servers">
+            <summary>服务端地址集合。负载均衡</summary>
+        </member>
+        <member name="P:NewLife.Remoting.WsClient.Cluster">
+            <summary>客户端连接集群</summary>
+        </member>
+        <member name="P:NewLife.Remoting.WsClient.UsePool">
+            <summary>是否使用连接池。true时建立多个到服务端的连接（高吞吐），默认false使用单一连接（低延迟）</summary>
+        </member>
+        <member name="P:NewLife.Remoting.WsClient.Token">
+            <summary>令牌。每次请求携带</summary>
+        </member>
+        <member name="P:NewLife.Remoting.WsClient.LastActive">
+            <summary>最后活跃时间</summary>
+        </member>
+        <member name="E:NewLife.Remoting.WsClient.Received">
+            <summary>收到请求或响应时</summary>
+        </member>
+        <member name="P:NewLife.Remoting.WsClient.StatInvoke">
+            <summary>调用统计</summary>
+        </member>
+        <member name="M:NewLife.Remoting.WsClient.#ctor">
+            <summary>实例化应用接口客户端</summary>
+        </member>
+        <member name="M:NewLife.Remoting.WsClient.#ctor(System.String)">
+            <summary>实例化应用接口客户端</summary>
+            <param name="uris">服务端地址集合，逗号分隔</param>
+        </member>
+        <member name="M:NewLife.Remoting.WsClient.Dispose(System.Boolean)">
+            <summary>销毁</summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:NewLife.Remoting.WsClient.Open">
+            <summary>打开客户端</summary>
+        </member>
+        <member name="M:NewLife.Remoting.WsClient.Close(System.String)">
+            <summary>关闭</summary>
+            <param name="reason">关闭原因。便于日志分析</param>
+            <returns>是否成功</returns>
+        </member>
+        <member name="M:NewLife.Remoting.WsClient.InitCluster">
+            <summary>初始化集群</summary>
+        </member>
+        <member name="M:NewLife.Remoting.WsClient.InvokeAsync``1(System.String,System.Object,System.Threading.CancellationToken)">
+            <summary>异步调用，等待返回结果</summary>
+            <typeparam name="TResult">返回类型</typeparam>
+            <param name="action">服务操作</param>
+            <param name="args">参数</param>
+            <param name="cancellationToken">取消通知</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.WsClient.Invoke``1(System.String,System.Object)">
+            <summary>同步调用，阻塞等待</summary>
+            <param name="action">服务操作</param>
+            <param name="args">参数</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.WsClient.InvokeOneWay(System.String,System.Object,System.Byte)">
+            <summary>单向发送。同步调用，不等待返回</summary>
+            <param name="action">服务操作</param>
+            <param name="args">参数</param>
+            <param name="flag">标识</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.WsClient.InvokeWithClientAsync``1(System.Net.WebSockets.WebSocket,System.String,System.Object,System.Byte,System.Threading.CancellationToken)">
+            <summary>指定客户端的异步调用，等待返回结果</summary>
+            <remarks>常用于在OnLoginAsync中实现连接后登录功能</remarks>
+            <typeparam name="TResult"></typeparam>
+            <param name="client">客户端</param>
+            <param name="action">服务操作</param>
+            <param name="args">参数</param>
+            <param name="flag">标识</param>
+            <param name="cancellationToken">取消通知</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.WsClient.InvokeWithClient(System.Net.WebSockets.WebSocket,System.String,System.Object,System.Byte)">
+            <summary>单向调用，不等待返回</summary>
+            <param name="client"></param>
+            <param name="action">服务操作</param>
+            <param name="args">参数</param>
+            <param name="flag">标识</param>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.WsClient.OnReceive(NewLife.Messaging.IMessage,NewLife.Remoting.ApiReceivedEventArgs)">
+            <summary>客户端收到服务端主动下发消息</summary>
+            <param name="message"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:NewLife.Remoting.WsClient.OnNewSession(System.Net.WebSockets.WebSocket)">
+            <summary>新会话。客户端每次连接或断线重连后，可用InvokeWithClientAsync做登录</summary>
+            <param name="client">会话</param>
+        </member>
+        <member name="M:NewLife.Remoting.WsClient.OnLoginAsync(System.Net.WebSockets.WebSocket,System.Boolean)">
+            <summary>连接后自动登录</summary>
+            <param name="client">客户端</param>
+            <param name="force">强制登录</param>
+        </member>
+        <member name="M:NewLife.Remoting.WsClient.LoginAsync">
+            <summary>登录</summary>
+            <returns></returns>
+        </member>
+        <member name="M:NewLife.Remoting.WsClient.OnCreate(System.String)">
+            <summary>创建客户端之后，打开连接之前</summary>
+            <param name="svr"></param>
+        </member>
+        <member name="P:NewLife.Remoting.WsClient.StatPeriod">
+            <summary>显示统计信息的周期。默认600秒，0表示不显示统计信息</summary>
+        </member>
+    </members>
+</doc>

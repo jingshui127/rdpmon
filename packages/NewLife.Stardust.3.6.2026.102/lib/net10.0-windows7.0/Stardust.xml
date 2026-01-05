@@ -1,0 +1,2685 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Stardust</name>
+    </assembly>
+    <members>
+        <member name="T:Stardust.AppClient">
+            <summary>应用客户端。每个应用有一个客户端连接星尘服务端</summary>
+        </member>
+        <member name="P:Stardust.AppClient.AppId">
+            <summary>应用</summary>
+        </member>
+        <member name="P:Stardust.AppClient.AppName">
+            <summary>应用名</summary>
+        </member>
+        <member name="P:Stardust.AppClient.ClientId">
+            <summary>实例。应用可能多实例部署，ip@proccessid</summary>
+        </member>
+        <member name="P:Stardust.AppClient.NodeCode">
+            <summary>节点编码</summary>
+        </member>
+        <member name="P:Stardust.AppClient.Project">
+            <summary>项目名。新应用默认所需要加入的项目</summary>
+        </member>
+        <member name="P:Stardust.AppClient.WatchdogTimeout">
+            <summary>看门狗超时时间。默认0秒</summary>
+            <remarks>
+            设置看门狗超时时间，超过该时间未收到心跳，将会重启本应用进程。
+            0秒表示不启用看门狗。
+            </remarks>
+        </member>
+        <member name="P:Stardust.AppClient.Factory">
+            <summary>星尘工厂</summary>
+        </member>
+        <member name="F:Stardust.AppClient._publishServices">
+            <summary>已发布服务，记录下来，定时注册刷新</summary>
+        </member>
+        <member name="F:Stardust.AppClient._consumeServices">
+            <summary>已消费服务，记录下来，定时刷新获取新的地址信息</summary>
+        </member>
+        <member name="M:Stardust.AppClient.#ctor">
+            <summary>实例化</summary>
+        </member>
+        <member name="M:Stardust.AppClient.#ctor(System.String)">
+            <summary>实例化</summary>
+            <param name="urls"></param>
+        </member>
+        <member name="M:Stardust.AppClient.Dispose(System.Boolean)">
+            <summary>销毁</summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:Stardust.AppClient.OnInit">
+            <summary>初始化</summary>
+        </member>
+        <member name="M:Stardust.AppClient.BuildLoginRequest">
+            <summary>构造登录请求</summary>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.AppClient.BuildPingRequest">
+            <summary>构建心跳请求</summary>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.AppClient.PingLocal">
+            <summary>向本地StarAgent发送心跳</summary>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.AppClient.OnPing(System.Object)">
+            <summary>心跳</summary>
+            <param name="state"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.AppClient.HandleAsync(NewLife.Data.IPacket,NewLife.Messaging.IEventContext,System.Threading.CancellationToken)">
+            <summary>分发消息</summary>
+            <param name="data">数据包</param>
+            <param name="context">事件上下文。用于在发布者、订阅者及中间处理器之间传递协调数据，如 Handler、ClientId 等</param>
+            <param name="cancellationToken">取消通知</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.AppClient.RegisterAsync(Stardust.Models.PublishServiceInfo)">
+            <summary>发布服务（底层）。定时反复执行，让服务端更新注册信息</summary>
+            <param name="service">应用服务</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.AppClient.UnregisterAsync(Stardust.Models.PublishServiceInfo)">
+            <summary>取消服务（底层）</summary>
+            <param name="service">应用服务</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.AppClient.CreatePublishService(System.String)">
+            <summary>创建服务对象，用于自定义需要，再通过RegisterAsync发布到注册中心</summary>
+            <param name="serviceName">服务名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.AppClient.RegisterAsync(System.String,System.String,System.String,System.String)">
+            <summary>发布服务（直达）</summary>
+            <remarks>
+            可以多次调用注册，用于更新服务地址和特性标签等信息。
+            例如web应用，刚开始时可能并不知道自己的外部地址（域名和端口），有用户访问以后，即可得知并更新。
+            即使发布失败，也已经加入队列，后续会定时发布。
+            </remarks>
+            <param name="serviceName">服务名</param>
+            <param name="address">服务地址</param>
+            <param name="tag">特性标签</param>
+            <param name="health">健康监测接口地址</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.AppClient.Register(System.String,System.Func{System.String},System.String,System.String)">
+            <summary>发布服务（延迟），直到回调函数返回地址信息才做真正发布</summary>
+            <param name="serviceName">服务名</param>
+            <param name="addressCallback">服务地址回调</param>
+            <param name="tag">特性标签</param>
+            <param name="health">健康监测接口地址</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.AppClient.Unregister(System.String)">
+            <summary>取消服务</summary>
+            <param name="serviceName">服务名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.AppClient.ResolveAsync(Stardust.Models.ConsumeServiceInfo)">
+            <summary>消费服务（底层）</summary>
+            <param name="service">应用服务</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.AppClient.ResolveAsync(System.String,System.String,System.String)">
+            <summary>消费得到服务地址信息</summary>
+            <param name="serviceName">服务名</param>
+            <param name="minVersion">最小版本</param>
+            <param name="tag">特性标签。只要包含该特性的服务提供者</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.AppClient.Bind(System.String,Stardust.Registry.ServiceChangedCallback)">
+            <summary>绑定消费服务名到指定事件，服务改变时通知外部</summary>
+            <param name="serviceName">服务名</param>
+            <param name="callback">回调方法</param>
+        </member>
+        <member name="M:Stardust.AppClient.GetEventBus``1(System.String)">
+            <summary>创建事件总线，指定主题，绑定WebSocket通道，客户端收到下发数据包时，路由到topic对应的事件总线</summary>
+            <typeparam name="TEvent"></typeparam>
+            <param name="topic">主题</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.AppClient.PublishEventAsync(System.String,System.String,System.Threading.CancellationToken)">
+            <summary>发布事件到总线</summary>
+            <param name="topic">主题</param>
+            <param name="message">事件。可能是事件json，也可能是subscribe/unsubcribe</param>
+            <param name="cancellationToken">取消通知</param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:Stardust.AppClient.Attach(NewLife.Remoting.Clients.ICommandClient)">
+            <summary>附加刷新命令</summary>
+            <param name="client"></param>
+        </member>
+        <member name="M:Stardust.AppClient.SetServerAddress(System.String)">
+            <summary>
+            设置服务地址
+            </summary>
+            <param name="serverAddress"></param>
+        </member>
+        <member name="M:Stardust.AppClient.IsLocal(System.String)">
+            <summary>
+            是否本地地址
+            </summary>
+            <param name="address"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.AppClient.FreeMemory">
+            <summary>释放内存。GC回收后再释放虚拟内存</summary>
+        </member>
+        <member name="M:Stardust.Configs.StarHttpConfigProvider.Find(System.String,System.Boolean)">
+            <summary>获取指定配置。拦截对注册中心的请求</summary>
+            <param name="key"></param>
+            <param name="createOnMiss"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Stardust.Deployment.CopyModes">
+            <summary>拷贝模式。发布时拷贝文件的行为模式</summary>
+            <remarks>
+            对于配置文件，常用Skip，因为配置文件可能在部署时被修改，如果覆盖，可能会导致配置丢失。
+            对于可执行文件，常用Overwrite，因为被发布的可执行文件一般被修改过。
+            </remarks>
+        </member>
+        <member name="F:Stardust.Deployment.CopyModes.None">
+            <summary>无</summary>
+        </member>
+        <member name="F:Stardust.Deployment.CopyModes.SkipExists">
+            <summary>跳过已存在</summary>
+        </member>
+        <member name="F:Stardust.Deployment.CopyModes.Overwrite">
+            <summary>覆盖已存在</summary>
+        </member>
+        <member name="F:Stardust.Deployment.CopyModes.ClearBeforeCopy">
+            <summary>拷贝前清空</summary>
+        </member>
+        <member name="T:Stardust.Deployment.NginxFile">
+            <summary>
+            用于解析和生成 Nginx 配置文件的类
+            </summary>
+            <remarks>
+            server {
+            	listen 80;
+            	listen 443 ssl;
+            	listen [::]:80;
+            	listen [::]:443 ssl;
+            
+            	server_name star.newlifex.com;
+            
+            	ssl_certificate /root/certs/newlifex.com.pem;
+            	ssl_certificate_key /root/certs/newlifex.com.privatekey.pem;
+            
+            	location / {
+            		proxy_pass		http://127.0.0.1:6680/;
+            		proxy_http_version	1.1;
+            		proxy_set_header	Upgrade $http_upgrade;
+            		proxy_set_header	Connection "upgrade";
+            		proxy_set_header	Host $host;
+            		proxy_cache_bypass	$http_upgrade;
+            		proxy_set_header	X-Real-IP $remote_addr;
+            		proxy_set_header	X-Forwarded-For $proxy_add_x_forwarded_for;
+            		proxy_set_header	X-Forwarded-Proto $scheme;
+            		client_max_body_size	1024M;
+            	}
+            }
+            </remarks>
+        </member>
+        <member name="P:Stardust.Deployment.NginxFile.ServerName">
+            <summary>服务名。一般是域名</summary>
+        </member>
+        <member name="P:Stardust.Deployment.NginxFile.Ports">
+            <summary>监听的端口列表</summary>
+        </member>
+        <member name="P:Stardust.Deployment.NginxFile.SupportIPv6">
+            <summary>是否支持 IPv6</summary>
+        </member>
+        <member name="P:Stardust.Deployment.NginxFile.SslCertificate">
+            <summary>SSL 证书路径</summary>
+        </member>
+        <member name="P:Stardust.Deployment.NginxFile.SslCertificateKey">
+            <summary>SSL 证书密钥路径</summary>
+        </member>
+        <member name="P:Stardust.Deployment.NginxFile.Directives">
+            <summary>块内的指令</summary>
+        </member>
+        <member name="P:Stardust.Deployment.NginxFile.Blocks">
+            <summary>其它自定义块</summary>
+        </member>
+        <member name="M:Stardust.Deployment.NginxFile.Load(System.String)">
+            <summary>从文件加载并解析 Nginx 配置</summary>
+        </member>
+        <member name="M:Stardust.Deployment.NginxFile.Parse(System.String)">
+            <summary>从文本解析 Nginx 配置</summary>
+        </member>
+        <member name="M:Stardust.Deployment.NginxFile.Build">
+            <summary>将当前 Nginx 配置转换为字符串表示</summary>
+        </member>
+        <member name="M:Stardust.Deployment.NginxFile.ToString">
+            <summary>生成 Nginx 配置文本</summary>
+        </member>
+        <member name="M:Stardust.Deployment.NginxFile.GetLocation(System.Boolean)">
+            <summary>获取Location块，不存在时创建</summary>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Deployment.NginxFile.GetBackends">
+            <summary>获取后端服务地址列表</summary>
+        </member>
+        <member name="M:Stardust.Deployment.NginxFile.SetBackends(System.String[])">
+            <summary>设置后端服务地址</summary>
+        </member>
+        <member name="T:Stardust.Deployment.NginxBlock">
+            <summary>
+            Nginx 配置块（如 http、server、location 等）
+            </summary>
+        </member>
+        <member name="P:Stardust.Deployment.NginxBlock.Name">
+            <summary>块名</summary>
+        </member>
+        <member name="P:Stardust.Deployment.NginxBlock.Directives">
+            <summary>块内的指令</summary>
+        </member>
+        <member name="P:Stardust.Deployment.NginxBlock.Childs">
+            <summary>子块列表</summary>
+        </member>
+        <member name="M:Stardust.Deployment.NginxBlock.Parse(System.String[],System.Int32@)">
+            <summary>解析 Nginx 块</summary>
+        </member>
+        <member name="M:Stardust.Deployment.NginxBlock.Build(System.Text.StringBuilder,System.Int32)">
+            <summary>构建 Nginx 块的字符串表示</summary>
+        </member>
+        <member name="M:Stardust.Deployment.NginxBlock.ToString">
+            <summary>将当前块转换为字符串表示</summary>
+        </member>
+        <member name="T:Stardust.Deployment.ZipDeploy">
+            <summary>Zip压缩包发布</summary>
+        </member>
+        <member name="F:Stardust.Deployment.ZipDeploy.AppOfflineHtml">
+            <summary>IIS 应用离线页面内容</summary>
+        </member>
+        <member name="F:Stardust.Deployment.ZipDeploy.WebConfigFileName">
+            <summary>IIS web.config 文件名</summary>
+        </member>
+        <member name="F:Stardust.Deployment.ZipDeploy.AppOfflineFileName">
+            <summary>IIS app_offline.htm 文件名</summary>
+        </member>
+        <member name="F:Stardust.Deployment.ZipDeploy.BackupExtension">
+            <summary>备份文件扩展名</summary>
+        </member>
+        <member name="F:Stardust.Deployment.ZipDeploy.IisFileReleaseDelayMs">
+            <summary>IIS 释放文件锁等待时间（毫秒）</summary>
+        </member>
+        <member name="P:Stardust.Deployment.ZipDeploy.Name">
+            <summary>应用名称</summary>
+        </member>
+        <member name="P:Stardust.Deployment.ZipDeploy.AppId">
+            <summary>应用编码</summary>
+        </member>
+        <member name="P:Stardust.Deployment.ZipDeploy.FileName">
+            <summary>文件名</summary>
+        </member>
+        <member name="P:Stardust.Deployment.ZipDeploy.Arguments">
+            <summary>启动参数</summary>
+        </member>
+        <member name="P:Stardust.Deployment.ZipDeploy.WorkingDirectory">
+            <summary>工作目录</summary>
+        </member>
+        <member name="P:Stardust.Deployment.ZipDeploy.Shadow">
+            <summary>影子目录。应用将在其中执行</summary>
+            <remarks>默认使用上一级的shadow目录，无权时使用临时目录</remarks>
+        </member>
+        <member name="P:Stardust.Deployment.ZipDeploy.ExecuteFile">
+            <summary>可执行文件路径</summary>
+        </member>
+        <member name="P:Stardust.Deployment.ZipDeploy.UserName">
+            <summary>用户。以该用户执行应用</summary>
+        </member>
+        <member name="P:Stardust.Deployment.ZipDeploy.Environments">
+            <summary>环境变量。启动应用前设置的环境变量</summary>
+        </member>
+        <member name="P:Stardust.Deployment.ZipDeploy.Priority">
+            <summary>优先级。表示应用程序中任务或操作的优先级级别</summary>
+        </member>
+        <member name="P:Stardust.Deployment.ZipDeploy.StartupHook">
+            <summary>启动挂钩。拉起目标进程时，对dotNet应用注入星尘监控钩子，默认false</summary>
+        </member>
+        <member name="P:Stardust.Deployment.ZipDeploy.Overwrite">
+            <summary>覆盖文件。需要拷贝覆盖已存在的文件或子目录，支持*模糊匹配，多文件分号隔开。如果目标文件不存在，配置文件等自动拷贝</summary>
+        </member>
+        <member name="P:Stardust.Deployment.ZipDeploy.Mode">
+            <summary>发布模式。1部分包，仅覆盖；2标准包，清空可执行文件再覆盖；3完整包，清空所有文件</summary>
+        </member>
+        <member name="P:Stardust.Deployment.ZipDeploy.Process">
+            <summary>进程</summary>
+        </member>
+        <member name="P:Stardust.Deployment.ZipDeploy.Debug">
+            <summary>是否调试模式。在调试模式下，重定向控制台输出到日志</summary>
+        </member>
+        <member name="P:Stardust.Deployment.ZipDeploy.LastError">
+            <summary>最后的错误信息</summary>
+        </member>
+        <member name="P:Stardust.Deployment.ZipDeploy.Tracer">
+            <summary>链路追踪</summary>
+        </member>
+        <member name="M:Stardust.Deployment.ZipDeploy.Parse(System.String[])">
+            <summary>从启动参数中分析参数设置</summary>
+            <param name="args"></param>
+            <returns></returns>
+            <exception cref="T:System.IO.FileNotFoundException"></exception>
+        </member>
+        <member name="M:Stardust.Deployment.ZipDeploy.CreateShadow(System.String)">
+            <summary>创建默认影子目录</summary>
+            <param name="name">应用目录名，若未指定则仅返回顶级目录。应用名一般是{app}-{hash}</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Deployment.ZipDeploy.Execute(System.Int32)">
+            <summary>执行拉起应用</summary>
+        </member>
+        <member name="M:Stardust.Deployment.ZipDeploy.Extract(System.String,Stardust.Deployment.CopyModes,Stardust.Deployment.CopyModes,Stardust.Deployment.CopyModes)">
+            <summary>解压缩到影子目录，并拷贝文件到工作目录</summary>
+            <param name="shadow">影子目录</param>
+            <param name="exefile">可执行文件拷贝模式</param>
+            <param name="configfile">配置文件拷贝模式</param>
+            <param name="otherfile">其它文件拷贝模式</param>
+        </member>
+        <member name="M:Stardust.Deployment.ZipDeploy.FindExeFile(System.String)">
+            <summary>查找执行文件</summary>
+            <param name="path"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Stardust.Deployment.ZipDeploy.Log">
+            <summary>日志</summary>
+        </member>
+        <member name="M:Stardust.Deployment.ZipDeploy.WriteLog(System.String,System.Object[])">
+            <summary>写日志</summary>
+            <param name="format"></param>
+            <param name="args"></param>
+        </member>
+        <member name="T:Stardust.DingTalk.DingTalkClient">
+            <summary>钉钉机器人</summary>
+        </member>
+        <member name="P:Stardust.DingTalk.DingTalkClient.Url">
+            <summary>服务地址</summary>
+        </member>
+        <member name="P:Stardust.DingTalk.DingTalkClient.Tracer">
+            <summary>性能追踪</summary>
+        </member>
+        <member name="M:Stardust.DingTalk.DingTalkClient.SendText(System.String,System.String[])">
+            <summary>发送文本消息</summary>
+            <param name="content">消息内容</param>
+            <param name="mentions">提醒人。手机号，支持all</param>
+        </member>
+        <member name="M:Stardust.DingTalk.DingTalkClient.FormatMarkdown(System.String)">
+            <summary>
+            格式化Markdown数据
+            </summary>
+            <param name="text"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.DingTalk.DingTalkClient.SendMarkDown(System.String,System.String,System.String[])">
+            <summary>发送markdown</summary>
+            <param name="title"></param>
+            <param name="text"></param>
+            <param name="mentions">提醒人。手机号，支持all</param>
+        </member>
+        <member name="M:Stardust.DingTalk.DingTalkClient.SendLink(Stardust.WeiXin.Article)">
+            <summary>发送图文，文章列表</summary>
+            <param name="article"></param>
+        </member>
+        <member name="P:Stardust.DingTalk.DingTalkClient.Log">
+            <summary>日志</summary>
+        </member>
+        <member name="M:Stardust.DingTalk.DingTalkClient.WriteLog(System.String,System.Object[])">
+            <summary>写日志</summary>
+            <param name="format"></param>
+            <param name="args"></param>
+        </member>
+        <member name="T:Stardust.LocalStarClient">
+            <summary>本地星尘客户端。连接本机星尘代理StarAgent</summary>
+        </member>
+        <member name="P:Stardust.LocalStarClient.Info">
+            <summary>本机代理信息</summary>
+        </member>
+        <member name="P:Stardust.LocalStarClient.Server">
+            <summary>本地服务端地址</summary>
+        </member>
+        <member name="P:Stardust.LocalStarClient.Port">
+            <summary>本地星尘代理服务地址</summary>
+        </member>
+        <member name="M:Stardust.LocalStarClient.#ctor">
+            <summary>实例化</summary>
+        </member>
+        <member name="M:Stardust.LocalStarClient.GetInfo">
+            <summary>获取信息</summary>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.LocalStarClient.GetInfoAsync">
+            <summary>获取信息</summary>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.LocalStarClient.PingAsync(Stardust.Models.AppInfo,System.Int32)">
+            <summary>向StarAgent发送心跳</summary>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.LocalStarClient.KillAndRestartMySelf">
+            <summary>自杀并重启</summary>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.LocalStarClient.ProbeAndInstall(System.String,System.String,System.String)">
+            <summary>探测并安装星尘代理</summary>
+            <param name="url">zip包下载源</param>
+            <param name="version">版本号</param>
+            <param name="target">目标目录</param>
+        </member>
+        <member name="M:Stardust.LocalStarClient.ProbeAsync(System.String,System.String,System.String)">
+            <summary>探测并安装星尘代理</summary>
+            <param name="url">zip包下载源</param>
+            <param name="version">版本号</param>
+            <param name="target">目标目录</param>
+        </member>
+        <member name="M:Stardust.LocalStarClient.Scan(Stardust.Models.AgentInfo,System.Int32)">
+            <summary>在局域网中广播扫描所有StarAgent</summary>
+            <param name="local">本地信息，用于告知对方我是谁</param>
+            <param name="timeout"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Stardust.LocalStarClient.Log">
+            <summary>日志</summary>
+        </member>
+        <member name="M:Stardust.LocalStarClient.WriteLog(System.String,System.Object[])">
+            <summary>写日志</summary>
+            <param name="format"></param>
+            <param name="args"></param>
+        </member>
+        <member name="T:Stardust.Managers.FrameworkManager">
+            <summary>框架管理器</summary>
+        </member>
+        <member name="M:Stardust.Managers.FrameworkManager.GetAllVersions">
+            <summary>获取所有框架版本</summary>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Managers.FrameworkManager.Attach(NewLife.Remoting.Clients.ICommandClient)">
+            <summary>附加刷新命令</summary>
+            <param name="client"></param>
+        </member>
+        <member name="M:Stardust.Managers.FrameworkManager.CheckPing">
+            <summary>星尘安装卸载框架后，马上执行一次心跳，使得其尽快上报框架版本</summary>
+        </member>
+        <member name="P:Stardust.Managers.FrameworkManager.Log">
+            <summary>日志</summary>
+        </member>
+        <member name="M:Stardust.Managers.FrameworkManager.WriteLog(System.String,System.Object[])">
+            <summary>写日志</summary>
+            <param name="format"></param>
+            <param name="args"></param>
+        </member>
+        <member name="T:Stardust.Managers.MachineInfoProvider">
+            <summary>机器信息提供者，增强机器信息获取能力</summary>
+        </member>
+        <member name="M:Stardust.Managers.MachineInfoProvider.Init(NewLife.MachineInfo)">
+            <summary>初始化时执行一次</summary>
+            <param name="info"></param>
+        </member>
+        <member name="M:Stardust.Managers.MachineInfoProvider.Refresh(NewLife.MachineInfo)">
+            <summary>刷新时执行</summary>
+            <param name="info"></param>
+        </member>
+        <member name="T:Stardust.Managers.NetRuntime">
+            <summary>dotNet运行时</summary>
+        </member>
+        <member name="P:Stardust.Managers.NetRuntime.BaseUrl">
+            <summary>基准路径</summary>
+        </member>
+        <member name="P:Stardust.Managers.NetRuntime.Silent">
+            <summary>静默安装</summary>
+        </member>
+        <member name="P:Stardust.Managers.NetRuntime.CachePath">
+            <summary>缓存目录</summary>
+        </member>
+        <member name="P:Stardust.Managers.NetRuntime.Force">
+            <summary>是否强制。如果true，则已安装版本存在也强制安装。默认false</summary>
+        </member>
+        <member name="P:Stardust.Managers.NetRuntime.Hashs">
+            <summary>文件哈希。用于校验下载文件的完整性</summary>
+        </member>
+        <member name="P:Stardust.Managers.NetRuntime.EventProvider">
+            <summary>事件客户端</summary>
+        </member>
+        <member name="M:Stardust.Managers.NetRuntime.#ctor">
+            <summary>实例化</summary>
+        </member>
+        <member name="M:Stardust.Managers.NetRuntime.Download(System.String,System.String)">
+            <summary>下载文件</summary>
+            <param name="fileName"></param>
+            <param name="baseUrl"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Managers.NetRuntime.Install(System.String,System.String,System.String)">
+            <summary>安装</summary>
+            <param name="fileName"></param>
+            <param name="baseUrl"></param>
+            <param name="arg"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Managers.NetRuntime.InstallNet40">
+            <summary>安装.NET4.0</summary>
+        </member>
+        <member name="M:Stardust.Managers.NetRuntime.InstallNet45">
+            <summary>安装.NET4.5</summary>
+        </member>
+        <member name="M:Stardust.Managers.NetRuntime.InstallNet48">
+            <summary>安装.NET4.8</summary>
+        </member>
+        <member name="M:Stardust.Managers.NetRuntime.InstallNet(System.String,System.String,System.String)">
+            <summary>安装.NET</summary>
+            <param name="baseVersion">基础版本，如v9</param>
+            <param name="target">目标版本。包括子版本，如6.0.15</param>
+            <param name="kind">安装类型。如aspnet/desktop/host</param>
+        </member>
+        <member name="M:Stardust.Managers.NetRuntime.InstallNetOnLinux(System.String,System.String)">
+            <summary>在Linux上安装.NET运行时</summary>
+            <param name="target">目标版本。包括子版本，如6.0.15</param>
+            <param name="kind">安装类型。如aspnet</param>
+        </member>
+        <member name="M:Stardust.Managers.NetRuntime.UpgradeLibStdCxx">
+            <summary>更新Linux中的libstdc++库</summary>
+        </member>
+        <member name="M:Stardust.Managers.NetRuntime.IsAlpine">
+            <summary>Alpine基于uClibc和Busybox，对应dotnet运行时带有musl</summary>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Managers.NetRuntime.GetVers">
+            <summary>获取所有已安装版本</summary>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Managers.NetRuntime.Get1To45VersionFromRegistry">
+            <summary>获取Net45以下版本</summary>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Managers.NetRuntime.Get45PlusFromRegistry">
+            <summary>获取Net45版本</summary>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Managers.NetRuntime.GetNetCore(System.Boolean)">
+            <summary>获取NetCore版本</summary>
+            <returns></returns>
+        </member>
+        <member name="P:Stardust.Managers.NetRuntime.IsWindows">
+            <summary>是否Windows</summary>
+        </member>
+        <member name="M:Stardust.Managers.NetRuntime.GetMD5(System.String)">
+            <summary>获取文件MD5</summary>
+            <param name="fileName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Managers.NetRuntime.GetSHA512(System.String)">
+            <summary>获取文件SHA512</summary>
+            <param name="fileName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Managers.NetRuntime.LoadMD5s">
+            <summary>加载内嵌的文件MD5信息</summary>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Managers.NetRuntime.InstallCert">
+            <summary>安装微软根证书</summary>
+            <returns></returns>
+        </member>
+        <member name="P:Stardust.Managers.NetRuntime.Log">
+            <summary>日志</summary>
+        </member>
+        <member name="M:Stardust.Managers.NetRuntime.WriteLog(System.String,System.Object[])">
+            <summary>写日志</summary>
+            <param name="format"></param>
+            <param name="args"></param>
+        </member>
+        <member name="T:Stardust.Managers.ProcessInfo">
+            <summary>服务运行信息</summary>
+        </member>
+        <member name="P:Stardust.Managers.ProcessInfo.Name">
+            <summary>名称</summary>
+        </member>
+        <member name="P:Stardust.Managers.ProcessInfo.ProcessId">
+            <summary>进程Id</summary>
+        </member>
+        <member name="P:Stardust.Managers.ProcessInfo.ProcessName">
+            <summary>进程名</summary>
+        </member>
+        <member name="P:Stardust.Managers.ProcessInfo.CreateTime">
+            <summary>创建时间</summary>
+        </member>
+        <member name="P:Stardust.Managers.ProcessInfo.UpdateTime">
+            <summary>更新时间</summary>
+        </member>
+        <member name="T:Stardust.Managers.VerInfo">
+            <summary>版本信息</summary>
+        </member>
+        <member name="P:Stardust.Managers.VerInfo.Name">
+            <summary>名称</summary>
+        </member>
+        <member name="P:Stardust.Managers.VerInfo.Version">
+            <summary>版本</summary>
+        </member>
+        <member name="P:Stardust.Managers.VerInfo.Sp">
+            <summary>补丁</summary>
+        </member>
+        <member name="M:Stardust.Managers.VerInfo.ToString">
+            <summary>已重载。</summary>
+            <returns></returns>
+        </member>
+        <member name="T:Stardust.Models.AgentInfo">
+            <summary>代理信息</summary>
+        </member>
+        <member name="P:Stardust.Models.AgentInfo.ProcessId">
+            <summary>进程标识</summary>
+        </member>
+        <member name="P:Stardust.Models.AgentInfo.ProcessName">
+            <summary>进程名称</summary>
+        </member>
+        <member name="P:Stardust.Models.AgentInfo.Version">
+            <summary>版本</summary>
+        </member>
+        <member name="P:Stardust.Models.AgentInfo.FileName">
+            <summary>文件路径</summary>
+        </member>
+        <member name="P:Stardust.Models.AgentInfo.Arguments">
+            <summary>命令参数</summary>
+        </member>
+        <member name="P:Stardust.Models.AgentInfo.IP">
+            <summary>本地IP地址</summary>
+        </member>
+        <member name="P:Stardust.Models.AgentInfo.Server">
+            <summary>服务端地址</summary>
+        </member>
+        <member name="P:Stardust.Models.AgentInfo.PluginServer">
+            <summary>插件服务器</summary>
+        </member>
+        <member name="P:Stardust.Models.AgentInfo.Code">
+            <summary>节点编码</summary>
+        </member>
+        <member name="P:Stardust.Models.AgentInfo.Services">
+            <summary>应用服务</summary>
+        </member>
+        <member name="M:Stardust.Models.AgentInfo.GetLocal(System.Boolean)">
+            <summary>
+            获取本地信息
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Models.AgentInfo.GetIps">
+            <summary>
+            获取本地IP地址
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Models.AgentInfo.GetDns">
+            <summary>获取网关IP地址和MAC</summary>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Models.AgentInfo.GetGateway">
+            <summary>获取网关IP地址和MAC</summary>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Models.AgentInfo.GetArpTable">
+            <summary>获取ARP表</summary>
+            <returns></returns>
+        </member>
+        <member name="T:Stardust.Models.AppInfo">
+            <summary>进程信息</summary>
+        </member>
+        <member name="P:Stardust.Models.AppInfo.Id">
+            <summary>进程标识</summary>
+        </member>
+        <member name="P:Stardust.Models.AppInfo.Name">
+            <summary>进程名称</summary>
+        </member>
+        <member name="P:Stardust.Models.AppInfo.Version">
+            <summary>版本</summary>
+        </member>
+        <member name="P:Stardust.Models.AppInfo.AppName">
+            <summary>应用名</summary>
+        </member>
+        <member name="P:Stardust.Models.AppInfo.CommandLine">
+            <summary>命令行</summary>
+        </member>
+        <member name="P:Stardust.Models.AppInfo.UserName">
+            <summary>用户名</summary>
+        </member>
+        <member name="P:Stardust.Models.AppInfo.MachineName">
+            <summary>机器名</summary>
+        </member>
+        <member name="P:Stardust.Models.AppInfo.IP">
+            <summary>本地IP地址。随着网卡变动，可能改变</summary>
+        </member>
+        <member name="P:Stardust.Models.AppInfo.StartTime">
+            <summary>开始时间</summary>
+        </member>
+        <member name="P:Stardust.Models.AppInfo.ProcessorTime">
+            <summary>处理器时间。单位ms</summary>
+        </member>
+        <member name="P:Stardust.Models.AppInfo.CpuUsage">
+            <summary>CPU负载。处理器时间除以物理时间的占比</summary>
+        </member>
+        <member name="P:Stardust.Models.AppInfo.WorkingSet">
+            <summary>物理内存</summary>
+        </member>
+        <member name="P:Stardust.Models.AppInfo.HeapSize">
+            <summary>堆大小</summary>
+        </member>
+        <member name="P:Stardust.Models.AppInfo.Threads">
+            <summary>线程数</summary>
+        </member>
+        <member name="P:Stardust.Models.AppInfo.WorkerThreads">
+            <summary>线程池可用工作线程数</summary>
+        </member>
+        <member name="P:Stardust.Models.AppInfo.IOThreads">
+            <summary>线程池可用IO线程数</summary>
+        </member>
+        <member name="P:Stardust.Models.AppInfo.AvailableThreads">
+            <summary>线程池活跃线程数</summary>
+        </member>
+        <member name="P:Stardust.Models.AppInfo.PendingItems">
+            <summary>线程池挂起任务数</summary>
+        </member>
+        <member name="P:Stardust.Models.AppInfo.CompletedItems">
+            <summary>线程池已完成任务数</summary>
+        </member>
+        <member name="P:Stardust.Models.AppInfo.Handles">
+            <summary>句柄数</summary>
+        </member>
+        <member name="P:Stardust.Models.AppInfo.Connections">
+            <summary>连接数</summary>
+        </member>
+        <member name="P:Stardust.Models.AppInfo.Listens">
+            <summary>网络端口监听信息</summary>
+        </member>
+        <member name="P:Stardust.Models.AppInfo.GCCount">
+            <summary>采样周期内发生的GC次数</summary>
+        </member>
+        <member name="P:Stardust.Models.AppInfo.Time">
+            <summary>本地UTC时间。ms毫秒</summary>
+        </member>
+        <member name="M:Stardust.Models.AppInfo.#ctor">
+            <summary>实例化进程信息</summary>
+        </member>
+        <member name="M:Stardust.Models.AppInfo.#ctor(System.Diagnostics.Process)">
+            <summary>根据进程对象实例化进程信息</summary>
+            <param name="process"></param>
+        </member>
+        <member name="M:Stardust.Models.AppInfo.Refresh">
+            <summary>刷新进程相关信息</summary>
+        </member>
+        <member name="M:Stardust.Models.AppInfo.Clone">
+            <summary>克隆数据</summary>
+            <returns></returns>
+        </member>
+        <member name="T:Stardust.Models.AppModel">
+            <summary>应用模型</summary>
+        </member>
+        <member name="P:Stardust.Models.AppModel.AppId">
+            <summary>应用标识</summary>
+        </member>
+        <member name="P:Stardust.Models.AppModel.AppName">
+            <summary>应用名</summary>
+        </member>
+        <member name="P:Stardust.Models.AppModel.NodeCode">
+            <summary>节点编码</summary>
+        </member>
+        <member name="P:Stardust.Models.AppModel.Project">
+            <summary>项目名。新应用默认所需要加入的项目</summary>
+        </member>
+        <member name="T:Stardust.Models.BuildResult">
+            <summary>构建结果</summary>
+        </member>
+        <member name="P:Stardust.Models.BuildResult.Id">
+            <summary>构建任务ID</summary>
+        </member>
+        <member name="P:Stardust.Models.BuildResult.CommitId">
+            <summary>提交标识</summary>
+        </member>
+        <member name="P:Stardust.Models.BuildResult.CommitLog">
+            <summary>提交记录</summary>
+        </member>
+        <member name="P:Stardust.Models.BuildResult.CommitTime">
+            <summary>提交时间</summary>
+        </member>
+        <member name="P:Stardust.Models.BuildResult.Progress">
+            <summary>发布进度</summary>
+        </member>
+        <member name="T:Stardust.Models.BuildTask">
+            <summary>构建任务</summary>
+        </member>
+        <member name="P:Stardust.Models.BuildTask.Id">
+            <summary>构建任务ID</summary>
+        </member>
+        <member name="P:Stardust.Models.BuildTask.Name">
+            <summary>应用ID</summary>
+        </member>
+        <member name="T:Stardust.Models.CompileCommand">
+            <summary>编译命令参数</summary>
+        </member>
+        <member name="P:Stardust.Models.CompileCommand.Repository">
+            <summary>代码库。下载代码的位置</summary>
+        </member>
+        <member name="P:Stardust.Models.CompileCommand.Branch">
+            <summary>分支</summary>
+        </member>
+        <member name="P:Stardust.Models.CompileCommand.ProjectPath">
+            <summary>项目路径。需要编译的项目路径</summary>
+        </member>
+        <member name="P:Stardust.Models.CompileCommand.ProjectKind">
+            <summary>项目类型。默认dotnet</summary>
+        </member>
+        <member name="P:Stardust.Models.CompileCommand.PackageFilters">
+            <summary>打包过滤器。需要打包哪些文件，支持通配符，多项分号隔开</summary>
+        </member>
+        <member name="T:Stardust.Models.ConfigInfo">
+            <summary>配置信息</summary>
+        </member>
+        <member name="P:Stardust.Models.ConfigInfo.Version">
+            <summary>版本</summary>
+        </member>
+        <member name="P:Stardust.Models.ConfigInfo.Scope">
+            <summary>作用域。dev/test/stag/pro</summary>
+        </member>
+        <member name="P:Stardust.Models.ConfigInfo.SourceIP">
+            <summary>来源IP地址</summary>
+        </member>
+        <member name="P:Stardust.Models.ConfigInfo.NextVersion">
+            <summary>下一个版本。如果不同于的当前版本，则说明有新版本等待发布</summary>
+        </member>
+        <member name="P:Stardust.Models.ConfigInfo.NextPublish">
+            <summary>下次发布时间。用于定时发布</summary>
+        </member>
+        <member name="P:Stardust.Models.ConfigInfo.UpdateTime">
+            <summary>更新时间</summary>
+        </member>
+        <member name="P:Stardust.Models.ConfigInfo.Configs">
+            <summary>配置项集合</summary>
+        </member>
+        <member name="T:Stardust.Models.ConsumeServiceInfo">
+            <summary>消费服务信息</summary>
+        </member>
+        <member name="P:Stardust.Models.ConsumeServiceInfo.ServiceName">
+            <summary>服务名</summary>
+        </member>
+        <member name="P:Stardust.Models.ConsumeServiceInfo.ClientId">
+            <summary>客户端。IP加进程</summary>
+        </member>
+        <member name="P:Stardust.Models.ConsumeServiceInfo.MinVersion">
+            <summary>最低版本</summary>
+        </member>
+        <member name="P:Stardust.Models.ConsumeServiceInfo.Tag">
+            <summary>标签。带有指定特性，逗号分隔</summary>
+        </member>
+        <member name="T:Stardust.Models.DeployInfo">
+            <summary>应用发布信息</summary>
+        </member>
+        <member name="P:Stardust.Models.DeployInfo.Id">
+            <summary>发布编号。部署节点的编号</summary>
+        </member>
+        <member name="P:Stardust.Models.DeployInfo.Name">
+            <summary>应用名称</summary>
+        </member>
+        <member name="P:Stardust.Models.DeployInfo.Version">
+            <summary>应用版本</summary>
+        </member>
+        <member name="P:Stardust.Models.DeployInfo.Url">
+            <summary>应用包地址</summary>
+        </member>
+        <member name="P:Stardust.Models.DeployInfo.Hash">
+            <summary>哈希散列</summary>
+        </member>
+        <member name="P:Stardust.Models.DeployInfo.Overwrite">
+            <summary>覆盖文件。需要拷贝覆盖已存在的文件或子目录，支持*模糊匹配，多文件分号隔开。如果目标文件不存在，配置文件等自动拷贝</summary>
+        </member>
+        <member name="P:Stardust.Models.DeployInfo.Mode">
+            <summary>发布模式。1部分包，仅覆盖；2标准包，清空可执行文件再覆盖；3完整包，清空所有文件</summary>
+        </member>
+        <member name="P:Stardust.Models.DeployInfo.Service">
+            <summary>应用服务</summary>
+        </member>
+        <member name="T:Stardust.Models.DeployModes">
+            <summary>发布模式</summary>
+        </member>
+        <member name="F:Stardust.Models.DeployModes.Partial">
+            <summary>增量包。覆盖已有文件，保留其它文件，常用日常迭代。增量包不能独立运行</summary>
+        </member>
+        <member name="F:Stardust.Models.DeployModes.Standard">
+            <summary>标准包。清空所有可执行文件，保留配置和数据等其它文件，常用于大版本升级，也可用于修错发布</summary>
+        </member>
+        <member name="F:Stardust.Models.DeployModes.Full">
+            <summary>完整包。清空所有文件，一般仅用于首次发布</summary>
+        </member>
+        <member name="T:Stardust.Models.FrameworkModel">
+            <summary>框架模型</summary>
+        </member>
+        <member name="P:Stardust.Models.FrameworkModel.Version">
+            <summary>要安装的目标版本</summary>
+        </member>
+        <member name="P:Stardust.Models.FrameworkModel.BaseUrl">
+            <summary>基准路径。将从该路径下载框架安装文件</summary>
+        </member>
+        <member name="P:Stardust.Models.FrameworkModel.Force">
+            <summary>是否强制。如果true，则已安装版本存在也强制安装。默认false</summary>
+        </member>
+        <member name="T:Stardust.Models.LocalPingInfo">
+            <summary>本地心跳</summary>
+        </member>
+        <member name="P:Stardust.Models.LocalPingInfo.ProcessId">
+            <summary>进程标识</summary>
+        </member>
+        <member name="P:Stardust.Models.LocalPingInfo.ProcessName">
+            <summary>进程名称</summary>
+        </member>
+        <member name="P:Stardust.Models.LocalPingInfo.Version">
+            <summary>版本</summary>
+        </member>
+        <member name="P:Stardust.Models.LocalPingInfo.AppName">
+            <summary>应用名</summary>
+        </member>
+        <member name="P:Stardust.Models.LocalPingInfo.WatchdogTimeout">
+            <summary>看门狗超时时间。默认0秒</summary>
+            <remarks>
+            设置看门狗超时时间，超过该时间未收到心跳，将会重启本应用进程。
+            0秒表示不启用看门狗。
+            </remarks>
+        </member>
+        <member name="T:Stardust.Models.LoginInfo">
+            <summary>节点登录信息</summary>
+        </member>
+        <member name="P:Stardust.Models.LoginInfo.Code">
+            <summary>节点编码</summary>
+        </member>
+        <member name="P:Stardust.Models.LoginInfo.Secret">
+            <summary>节点密钥</summary>
+        </member>
+        <member name="P:Stardust.Models.LoginInfo.ProductCode">
+            <summary>产品编码</summary>
+        </member>
+        <member name="P:Stardust.Models.LoginInfo.ClientId">
+            <summary>实例。应用可能多实例部署，ip@proccessid</summary>
+        </member>
+        <member name="P:Stardust.Models.LoginInfo.Project">
+            <summary>项目名。新节点默认所需要加入的项目</summary>
+        </member>
+        <member name="P:Stardust.Models.LoginInfo.Node">
+            <summary>节点信息</summary>
+        </member>
+        <member name="T:Stardust.Models.MigrationEventArgs">
+            <summary>迁移服务器事件参数</summary>
+        </member>
+        <member name="P:Stardust.Models.MigrationEventArgs.NewServer">
+            <summary>新服务器</summary>
+        </member>
+        <member name="T:Stardust.Models.NodeInfo">
+            <summary>节点信息</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.Version">
+            <summary>版本</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.Compile">
+            <summary>编译时间</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.OSName">
+            <summary>系统名</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.OSVersion">
+            <summary>系统版本</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.Architecture">
+            <summary>处理器架构</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.MachineName">
+            <summary>机器名</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.UserName">
+            <summary>用户名</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.IP">
+            <summary>本地IP地址。随着网卡变动，可能改变</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.Gateway">
+            <summary>网关地址。IP与MAC，随着网卡变动，可能改变</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.Dns">
+            <summary>DNS地址。随着网卡变动，可能改变</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.ProcessorCount">
+            <summary>核心数</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.Memory">
+            <summary>内存大小</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.AvailableMemory">
+            <summary>可用内存大小</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.FreeMemory">
+            <summary>空闲内存大小。在Linux上，空闲内存不一定可用</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.TotalSize">
+            <summary>磁盘大小。应用所在盘</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.AvailableFreeSpace">
+            <summary>磁盘可用空间。应用所在盘</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.DriveSize">
+            <summary>驱动器大小。所有分区总大小，单位M</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.DriveInfo">
+            <summary>驱动器信息。各分区大小，逗号分隔</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.MaxOpenFiles">
+            <summary>最大打开文件。Linux上的ulimit -n</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.Dpi">
+            <summary>像素点。默认96*96</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.Resolution">
+            <summary>分辨率。例如1024*768</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.Product">
+            <summary>产品名称</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.Vendor">
+            <summary>制造商</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.Processor">
+            <summary>处理器</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.UUID">
+            <summary>唯一标识</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.MachineGuid">
+            <summary>机器标识</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.SerialNumber">
+            <summary>计算机序列号。适用于品牌机，跟笔记本标签显示一致</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.Board">
+            <summary>主板。序列号或家族信息</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.DiskID">
+            <summary>磁盘标识</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.Macs">
+            <summary>MAC地址</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.InstallPath">
+            <summary>安装路径</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.Runtime">
+            <summary>运行时。运行应用的当前运行时版本</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.Framework">
+            <summary>框架。本地支持的所有版本框架</summary>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.Time">
+            <summary>本地UTC时间</summary>
+            <remarks>
+            跨系统传递UTC时间是严谨的，但是UTC时间序列化比较头疼，目前能够做到自己序列化后，自己能够解析出来，暂时用着，将来向netcore的system.text.json序列化迁移
+            </remarks>
+        </member>
+        <member name="P:Stardust.Models.NodeInfo.Plugins">
+            <summary>插件列表</summary>
+        </member>
+        <member name="T:Stardust.Models.OSKindHelper">
+            <summary>操作系统类型识别</summary>
+        </member>
+        <member name="M:Stardust.Models.OSKindHelper.Parse(System.String,System.String)">
+            <summary>识别操作系统类型</summary>
+            <param name="osName"></param>
+            <param name="osVersion"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Models.OSKindHelper.ParseWindows(System.String,System.String)">
+            <summary>识别Windows操作系统</summary>
+            <param name="osName"></param>
+            <param name="osVersion"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Models.OSKindHelper.ParseLinux(System.String,System.String)">
+            <summary>识别Linux操作系统</summary>
+            <param name="osName"></param>
+            <param name="osVersion"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Models.OSKindHelper.GetRID(Stardust.Models.OSKinds,System.String)">
+            <summary>获取指定类型操作系统在指定架构上的运行时标识。如win-x64/linux-musl-arm64</summary>
+            <param name="kind">系统类型</param>
+            <param name="arch">芯片架构。小写</param>
+            <returns></returns>
+        </member>
+        <member name="T:Stardust.Models.OSKinds">
+            <summary>系统种类。主流操作系统类型，不考虑子版本</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.Unknown">
+            <summary>未知</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.SmartOS">
+            <summary>SmartOS by NewLife</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.WinXP">
+            <summary>WinXP, 5.1.2600</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.WinXP3">
+            <summary>WinXP SP3, 5.1.2600</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.Win2003">
+            <summary>WinXP, 5.2.3790</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.WinVista">
+            <summary>Vista, 6.0.6000</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.Win2008">
+            <summary>Win2008, 6.0.6001</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.Win7">
+            <summary>Win7, 6.1.7600</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.Win71">
+            <summary>Win7 SP1, 6.1.7601</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.Win8">
+            <summary>Win8, 6.2.9200</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.Win81">
+            <summary>Win8.1, 6.3.9200</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.Win2012">
+            <summary>Win2012, 6.3.9600</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.Win2016">
+            <summary>Win2016</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.Win2019">
+            <summary>Win2019</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.Win2022">
+            <summary>Win2022</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.WinServer">
+            <summary>Windows服务器</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.Win10">
+            <summary>Win10, 10.0.10240</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.Win11">
+            <summary>Win11, 10.0.22000</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.Alpine">
+            <summary>Alpine</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.Linux">
+            <summary>Linux</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.ArchLinux">
+            <summary>ArchLinux</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.OpenWrt">
+            <summary>OpenWrt</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.Buildroot">
+            <summary>Buildroot</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.Ubuntu">
+            <summary>Ubuntu</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.Debian">
+            <summary>Debian</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.Armbian">
+            <summary>Armbian</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.Raspbian">
+            <summary>树莓派</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.RedHat">
+            <summary>红帽</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.CentOS">
+            <summary>Centos</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.Fedora">
+            <summary>Fedora</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.Alma">
+            <summary>AlmaLinux OS是一个开源、社区驱动的Linux操作系统，它填补了因CentOS稳定版本停止维护而留下的空白</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.SUSE">
+            <summary>SUSE Linux</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.OpenSUSE">
+            <summary>openSUSE。由Novell发起的开源项目，旨在推进Linux的广泛使用，提供了自由简单的方法来获得世界上最好用的Linux发行版之一</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.Rocky">
+            <summary>Rocky Linux。一个开源、社区拥有和管理、免费的企业Linux发行版，提供强大的生产级平台</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.Deepin">
+            <summary>深度</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.UOS">
+            <summary>统信UOS</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.Kylin">
+            <summary>银河麒麟</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.OpenKylin">
+            <summary>优麒麟</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.Loongnix">
+            <summary>龙芯操作系统</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.RedFlag">
+            <summary>红旗Linux</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.StartOS">
+            <summary>起点操作系统</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.AlibabaLinux">
+            <summary>Alibaba Cloud Linux</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.NeoKylin">
+            <summary>中标麒麟</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.Anolis">
+            <summary>龙蜥</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.Linx">
+            <summary>凝思</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.OpenEuler">
+            <summary>开源欧拉</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.EulerOS">
+            <summary>欧拉</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.KylinSec">
+            <summary>麒麟信安</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.PuhuaOS">
+            <summary>普华操作系统</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.FangdeOS">
+            <summary>方德操作系统</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.NewStartOS">
+            <summary>新支点操作系统</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.TencentOS">
+            <summary>腾讯云针对云的场景研发的Linux 操作系统</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.OpenCloudOS">
+            <summary>开源操作系统社区 OpenCloudOS 由腾讯与合作伙伴共同倡议发起</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.LoongOS">
+            <summary>龙芯嵌入式OS。具备精简、高效、实时特征的工控类操作系统</summary>
+            <remarks>基于通用Linux内核，利用RT-Linux技术实现实时性</remarks>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.MacOSX">
+            <summary>MacOS</summary>
+        </member>
+        <member name="F:Stardust.Models.OSKinds.Android">
+            <summary>Android</summary>
+        </member>
+        <member name="T:Stardust.Models.PingInfo">
+            <summary>心跳信息</summary>
+        </member>
+        <member name="P:Stardust.Models.PingInfo.DriveInfo">
+            <summary>驱动器信息。各分区大小，逗号分隔</summary>
+        </member>
+        <member name="P:Stardust.Models.PingInfo.Macs">
+            <summary>MAC地址</summary>
+        </member>
+        <member name="P:Stardust.Models.PingInfo.Framework">
+            <summary>框架。本地支持的所有版本框架</summary>
+        </member>
+        <member name="P:Stardust.Models.PingInfo.Gateway">
+            <summary>网关地址。IP与MAC，随着网卡变动，可能改变</summary>
+        </member>
+        <member name="P:Stardust.Models.PingInfo.Dns">
+            <summary>DNS地址。随着网卡变动，可能改变</summary>
+        </member>
+        <member name="P:Stardust.Models.PingInfo.Processes">
+            <summary>进程列表</summary>
+        </member>
+        <member name="P:Stardust.Models.PingInfo.ProcessCount">
+            <summary>进程个数</summary>
+        </member>
+        <member name="P:Stardust.Models.PingInfo.TcpConnections">
+            <summary>正在传输的Tcp连接数</summary>
+        </member>
+        <member name="P:Stardust.Models.PingInfo.TcpTimeWait">
+            <summary>主动关闭的Tcp连接数</summary>
+        </member>
+        <member name="P:Stardust.Models.PingInfo.TcpCloseWait">
+            <summary>被动关闭的Tcp连接数</summary>
+        </member>
+        <member name="P:Stardust.Models.PingInfo.IntranetScore">
+            <summary>内网质量。综合评估到网关的心跳延迟和丢包率，满分1分</summary>
+        </member>
+        <member name="P:Stardust.Models.PingInfo.InternetScore">
+            <summary>外网质量。综合评估到DNS和星尘服务器的心跳延迟和丢包率，满分1分</summary>
+        </member>
+        <member name="T:Stardust.Models.MyPingResponse">
+            <summary>心跳响应</summary>
+        </member>
+        <member name="P:Stardust.Models.MyPingResponse.SyncTime">
+            <summary>同步时间间隔。定期同步服务器时间到本地，默认0秒不同步</summary>
+        </member>
+        <member name="T:Stardust.Models.ProcessPriority">
+            <summary>
+            表示应用程序中任务或操作的优先级级别。
+            以 Normal (0) 为基准，其他优先级相对其高低分布。
+            </summary>
+        </member>
+        <member name="F:Stardust.Models.ProcessPriority.Idle">
+            <summary>
+            最低优先级，用于可延迟或非关键任务。
+            </summary>
+        </member>
+        <member name="F:Stardust.Models.ProcessPriority.BelowNormal">
+            <summary>
+            较低优先级，用于次要任务。
+            </summary>
+        </member>
+        <member name="F:Stardust.Models.ProcessPriority.Normal">
+            <summary>
+            正常优先级，用于标准任务处理。
+            </summary>
+        </member>
+        <member name="F:Stardust.Models.ProcessPriority.AboveNormal">
+            <summary>
+            较高优先级，用于需要尽快处理的重要任务。
+            </summary>
+        </member>
+        <member name="F:Stardust.Models.ProcessPriority.High">
+            <summary>
+            高优先级，用于关键业务操作。
+            </summary>
+        </member>
+        <member name="F:Stardust.Models.ProcessPriority.RealTime">
+            <summary>
+            紧急优先级，用于必须立即处理的实时或关键任务。
+            </summary>
+        </member>
+        <member name="T:Stardust.Models.ProjectKinds">
+            <summary>项目类型</summary>
+        </member>
+        <member name="F:Stardust.Models.ProjectKinds.DotNet">
+            <summary>dotnet项目，SDK编译</summary>
+        </member>
+        <member name="F:Stardust.Models.ProjectKinds.MSBuild">
+            <summary>dotnet项目，MSBuild编译</summary>
+        </member>
+        <member name="F:Stardust.Models.ProjectKinds.Custom">
+            <summary>自定义项目，执行自定义脚本编译</summary>
+        </member>
+        <member name="T:Stardust.Models.PublishServiceInfo">
+            <summary>生产服务信息</summary>
+        </member>
+        <member name="P:Stardust.Models.PublishServiceInfo.ServiceName">
+            <summary>服务名</summary>
+        </member>
+        <member name="P:Stardust.Models.PublishServiceInfo.ClientId">
+            <summary>客户端。IP加进程</summary>
+        </member>
+        <member name="P:Stardust.Models.PublishServiceInfo.IP">
+            <summary>本地IP地址</summary>
+        </member>
+        <member name="P:Stardust.Models.PublishServiceInfo.Version">
+            <summary>版本</summary>
+        </member>
+        <member name="P:Stardust.Models.PublishServiceInfo.Address">
+            <summary>服务地址。本地服务地址，可能是固定地址，也可能是http://*:8080,https://*:8001之类的形式</summary>
+        </member>
+        <member name="P:Stardust.Models.PublishServiceInfo.ExternalAddress">
+            <summary>外部服务地址。用户访问的原始外网地址，用于内部构造其它Url</summary>
+        </member>
+        <member name="P:Stardust.Models.PublishServiceInfo.Health">
+            <summary>健康检测地址</summary>
+        </member>
+        <member name="P:Stardust.Models.PublishServiceInfo.Tag">
+            <summary>标签。带有指定特性，逗号分隔</summary>
+        </member>
+        <member name="T:Stardust.Models.RuntimeIdentifier">
+            <summary>运行时标识符。定义应用包可运行的操作系统与处理器架构</summary>
+        </member>
+        <member name="F:Stardust.Models.RuntimeIdentifier.Any">
+            <summary>任意</summary>
+        </member>
+        <member name="F:Stardust.Models.RuntimeIdentifier.Win">
+            <summary>任意Windows系统</summary>
+        </member>
+        <member name="F:Stardust.Models.RuntimeIdentifier.WinX86">
+            <summary>Windows系统（32位）</summary>
+        </member>
+        <member name="F:Stardust.Models.RuntimeIdentifier.WinX64">
+            <summary>Windows系统（64位）</summary>
+        </member>
+        <member name="F:Stardust.Models.RuntimeIdentifier.WinArm">
+            <summary>Windows系统（32位Arm）</summary>
+        </member>
+        <member name="F:Stardust.Models.RuntimeIdentifier.WinArm64">
+            <summary>Windows系统（64位Arm）</summary>
+        </member>
+        <member name="F:Stardust.Models.RuntimeIdentifier.Linux">
+            <summary>任意Linux系统</summary>
+        </member>
+        <member name="F:Stardust.Models.RuntimeIdentifier.LinuxX64">
+            <summary>Linux系统（64位）</summary>
+        </member>
+        <member name="F:Stardust.Models.RuntimeIdentifier.LinuxArm">
+            <summary>Linux系统（32位Arm）</summary>
+        </member>
+        <member name="F:Stardust.Models.RuntimeIdentifier.LinuxArm64">
+            <summary>Linux系统（64位Arm）</summary>
+        </member>
+        <member name="F:Stardust.Models.RuntimeIdentifier.LinuxMips64">
+            <summary>Linux系统（64位MIPS）</summary>
+        </member>
+        <member name="F:Stardust.Models.RuntimeIdentifier.LinuxLA64">
+            <summary>Linux系统（龙芯）</summary>
+        </member>
+        <member name="F:Stardust.Models.RuntimeIdentifier.LinuxRiscV64">
+            <summary>Linux系统（RISC）</summary>
+        </member>
+        <member name="F:Stardust.Models.RuntimeIdentifier.LinuxMusl">
+            <summary>任意Linux系统（musl库）</summary>
+        </member>
+        <member name="F:Stardust.Models.RuntimeIdentifier.LinuxMuslX64">
+            <summary>Linux系统（musl库64位）</summary>
+        </member>
+        <member name="F:Stardust.Models.RuntimeIdentifier.LinuxMuslArm">
+            <summary>Linux系统（musl库32位Arm）</summary>
+        </member>
+        <member name="F:Stardust.Models.RuntimeIdentifier.LinuxMuslArm64">
+            <summary>Linux系统（musl库64位Arm）</summary>
+        </member>
+        <member name="F:Stardust.Models.RuntimeIdentifier.Osx">
+            <summary>任意OSX系统</summary>
+        </member>
+        <member name="F:Stardust.Models.RuntimeIdentifier.OsxX64">
+            <summary>OSX系统（64位）</summary>
+        </member>
+        <member name="F:Stardust.Models.RuntimeIdentifier.OsxArm64">
+            <summary>OSX系统（64位Arm）</summary>
+        </member>
+        <member name="T:Stardust.Models.ServiceInfo">
+            <summary>应用服务信息</summary>
+        </member>
+        <member name="P:Stardust.Models.ServiceInfo.Name">
+            <summary>名称。全局唯一，默认应用名，根据场景可以加dev等后缀</summary>
+        </member>
+        <member name="P:Stardust.Models.ServiceInfo.FileName">
+            <summary>文件名。启动进程时使用，如果是zip文件则经过内部处理</summary>
+        </member>
+        <member name="P:Stardust.Models.ServiceInfo.Arguments">
+            <summary>参数。启动进程时使用</summary>
+        </member>
+        <member name="P:Stardust.Models.ServiceInfo.WorkingDirectory">
+            <summary>工作目录。启动进程时使用</summary>
+        </member>
+        <member name="P:Stardust.Models.ServiceInfo.UserName">
+            <summary>用户。以该用户执行应用</summary>
+        </member>
+        <member name="P:Stardust.Models.ServiceInfo.Enable">
+            <summary>启用</summary>
+        </member>
+        <member name="P:Stardust.Models.ServiceInfo.Mode">
+            <summary>服务工作模式。0默认exe/zip；1仅解压；2解压后运行；3仅运行一次；4多实例exe/zip</summary>
+        </member>
+        <member name="P:Stardust.Models.ServiceInfo.Environments">
+            <summary>环境变量。启动应用前设置的环境变量</summary>
+        </member>
+        <member name="P:Stardust.Models.ServiceInfo.AutoStop">
+            <summary>自动停止。随着宿主的退出，同时停止该应用进程</summary>
+        </member>
+        <member name="P:Stardust.Models.ServiceInfo.ReloadOnChange">
+            <summary>检测变动。当文件发生改变时，自动重启应用</summary>
+        </member>
+        <member name="P:Stardust.Models.ServiceInfo.MaxMemory">
+            <summary>最大内存。单位M，超过上限时自动重启应用，默认0不限制</summary>
+        </member>
+        <member name="P:Stardust.Models.ServiceInfo.Priority">
+            <summary>优先级。表示应用程序中任务或操作的优先级级别</summary>
+        </member>
+        <member name="P:Stardust.Models.ServiceInfo.ZipFile">
+            <summary>压缩包文件</summary>
+        </member>
+        <member name="M:Stardust.Models.ServiceInfo.Clone">
+            <summary>克隆当前对象</summary>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Models.ServiceInfo.ToString">
+            <summary>已重载。友好显示</summary>
+            <returns></returns>
+        </member>
+        <member name="T:Stardust.Models.ServiceModel">
+            <summary>服务模型</summary>
+        </member>
+        <member name="P:Stardust.Models.ServiceModel.ServiceName">
+            <summary>服务名</summary>
+        </member>
+        <member name="P:Stardust.Models.ServiceModel.DisplayName">
+            <summary>显示名</summary>
+        </member>
+        <member name="P:Stardust.Models.ServiceModel.Client">
+            <summary>客户端。IP加进程</summary>
+        </member>
+        <member name="P:Stardust.Models.ServiceModel.Version">
+            <summary>版本</summary>
+        </member>
+        <member name="P:Stardust.Models.ServiceModel.Address">
+            <summary>服务地址。本地局域网地址</summary>
+        </member>
+        <member name="P:Stardust.Models.ServiceModel.Address2">
+            <summary>外部地址。经过网关之前的外部地址</summary>
+        </member>
+        <member name="P:Stardust.Models.ServiceModel.Scope">
+            <summary>作用域</summary>
+        </member>
+        <member name="P:Stardust.Models.ServiceModel.Tag">
+            <summary>标签</summary>
+        </member>
+        <member name="P:Stardust.Models.ServiceModel.Weight">
+            <summary>权重</summary>
+        </member>
+        <member name="P:Stardust.Models.ServiceModel.CreateTime">
+            <summary>创建时间</summary>
+        </member>
+        <member name="P:Stardust.Models.ServiceModel.UpdateTime">
+            <summary>最后活跃时间</summary>
+        </member>
+        <member name="T:Stardust.Models.ServiceModes">
+            <summary>服务工作模式</summary>
+        </member>
+        <member name="F:Stardust.Models.ServiceModes.Default">
+            <summary>默认。单例运行exe或zip</summary>
+        </member>
+        <member name="F:Stardust.Models.ServiceModes.Extract">
+            <summary>解压缩。仅解压缩文件，由外部主机托管，如IIS</summary>
+        </member>
+        <member name="F:Stardust.Models.ServiceModes.ExtractAndRun">
+            <summary>解压并运行。</summary>
+        </member>
+        <member name="F:Stardust.Models.ServiceModes.RunOnce">
+            <summary>仅运行一次。运行后自动进入禁用状态</summary>
+        </member>
+        <member name="F:Stardust.Models.ServiceModes.Multiple">
+            <summary>多实例。直接运行exe或zip，支持多实例</summary>
+        </member>
+        <member name="T:Stardust.Models.ServicesInfo">
+            <summary>应用服务集合信息</summary>
+        </member>
+        <member name="P:Stardust.Models.ServicesInfo.Services">
+            <summary>
+            应用服务集合
+            </summary>
+        </member>
+        <member name="P:Stardust.Models.ServicesInfo.RunningServices">
+            <summary>正在运行的应用服务信息</summary>
+        </member>
+        <member name="T:Stardust.Models.ServiceOperationResult">
+            <summary>
+            应用服务操作结果
+            </summary>
+        </member>
+        <member name="P:Stardust.Models.ServiceOperationResult.Success">
+            <summary>
+            是否成功
+            </summary>
+        </member>
+        <member name="P:Stardust.Models.ServiceOperationResult.Message">
+            <summary>
+            错误信息
+            </summary>
+        </member>
+        <member name="P:Stardust.Models.ServiceOperationResult.ServiceName">
+            <summary>
+            服务名称
+            </summary>
+        </member>
+        <member name="T:Stardust.Monitors.DiagnosticListenerObserver">
+            <summary>诊断监听器的观察者</summary>
+        </member>
+        <member name="P:Stardust.Monitors.DiagnosticListenerObserver.Tracer">
+            <summary>追踪器</summary>
+        </member>
+        <member name="M:Stardust.Monitors.DiagnosticListenerObserver.Subscribe(System.String,System.String,System.String,System.String)">
+            <summary>订阅新的监听器</summary>
+            <param name="listenerName">监听名称</param>
+            <param name="startName">开始名</param>
+            <param name="endName">结束名</param>
+            <param name="errorName">错误名</param>
+        </member>
+        <member name="M:Stardust.Monitors.DiagnosticListenerObserver.Subscribe(Stardust.Monitors.TraceDiagnosticListener)">
+            <summary>订阅新的监听器</summary>
+            <param name="listener"></param>
+        </member>
+        <member name="T:Stardust.Monitors.TraceDiagnosticListener">
+            <summary>追踪诊断监听器</summary>
+        </member>
+        <member name="P:Stardust.Monitors.TraceDiagnosticListener.Name">
+            <summary>名称</summary>
+        </member>
+        <member name="P:Stardust.Monitors.TraceDiagnosticListener.StartName">
+            <summary>开始名称</summary>
+        </member>
+        <member name="P:Stardust.Monitors.TraceDiagnosticListener.EndName">
+            <summary>结束名称</summary>
+        </member>
+        <member name="P:Stardust.Monitors.TraceDiagnosticListener.ErrorName">
+            <summary>异常名称</summary>
+        </member>
+        <member name="P:Stardust.Monitors.TraceDiagnosticListener.Tracer">
+            <summary>追踪器</summary>
+        </member>
+        <member name="M:Stardust.Monitors.TraceDiagnosticListener.OnCompleted">
+            <summary>完成时</summary>
+        </member>
+        <member name="M:Stardust.Monitors.TraceDiagnosticListener.OnError(System.Exception)">
+            <summary>出错</summary>
+            <param name="error"></param>
+        </member>
+        <member name="M:Stardust.Monitors.TraceDiagnosticListener.OnNext(System.Collections.Generic.KeyValuePair{System.String,System.Object})">
+            <summary>下一步</summary>
+            <param name="value"></param>
+        </member>
+        <member name="T:Stardust.Monitors.DnsEventListener">
+            <summary>DNS事件监听器</summary>
+        </member>
+        <member name="M:Stardust.Monitors.DnsEventListener.#ctor">
+            <summary>实例化</summary>
+        </member>
+        <member name="M:Stardust.Monitors.DnsEventListener.OnEventWritten(System.Diagnostics.Tracing.EventWrittenEventArgs)">
+            <summary>写入事件。监听器拦截，并写入日志</summary>
+            <param name="eventData"></param>
+        </member>
+        <member name="T:Stardust.Monitors.EfCoreDiagnosticListener">
+            <summary>EfCore诊断监听器</summary>
+        </member>
+        <member name="M:Stardust.Monitors.EfCoreDiagnosticListener.#ctor">
+            <summary>实例化</summary>
+        </member>
+        <member name="M:Stardust.Monitors.EfCoreDiagnosticListener.OnNext(System.Collections.Generic.KeyValuePair{System.String,System.Object})">
+            <summary>下一步</summary>
+            <param name="value"></param>
+        </member>
+        <member name="M:Stardust.Monitors.EfCoreDiagnosticListener.GetTables(System.String,System.Boolean)">
+            <summary>从Sql语句中截取表名</summary>
+            <param name="sql">Sql语句</param>
+            <param name="trimShard">是否去掉表名后面的分表信息。如日期分表</param>
+            <returns></returns>
+        </member>
+        <member name="T:Stardust.Monitors.EventListenerBase">
+            <summary>事件监听器基类</summary>
+        </member>
+        <member name="P:Stardust.Monitors.EventListenerBase.Name">
+            <summary>事件源名称</summary>
+        </member>
+        <member name="P:Stardust.Monitors.EventListenerBase.Tracer">
+            <summary>追踪器</summary>
+        </member>
+        <member name="M:Stardust.Monitors.EventListenerBase.#ctor(System.String)">
+            <summary>实例化</summary>
+            <param name="name"></param>
+        </member>
+        <member name="M:Stardust.Monitors.EventListenerBase.OnEventSourceCreated(System.Diagnostics.Tracing.EventSource)">
+            <summary>创建事件源。此时决定要不要跟踪</summary>
+            <param name="eventSource"></param>
+        </member>
+        <member name="M:Stardust.Monitors.EventListenerBase.Append(NewLife.Log.ISpan,System.Diagnostics.Tracing.EventWrittenEventArgs)">
+            <summary>事件数据附加到埋点中</summary>
+            <param name="span"></param>
+            <param name="eventData"></param>
+        </member>
+        <member name="T:Stardust.Monitors.HttpDiagnosticListener">
+            <summary>Http诊断监听器</summary>
+        </member>
+        <member name="M:Stardust.Monitors.HttpDiagnosticListener.#ctor">
+            <summary>实例化</summary>
+        </member>
+        <member name="M:Stardust.Monitors.HttpDiagnosticListener.OnNext(System.Collections.Generic.KeyValuePair{System.String,System.Object})">
+            <summary>下一步</summary>
+            <param name="value"></param>
+        </member>
+        <member name="T:Stardust.Monitors.MongoDbDiagnosticListener">
+            <summary>MongoDb诊断监听器</summary>
+        </member>
+        <member name="M:Stardust.Monitors.MongoDbDiagnosticListener.#ctor">
+            <summary>实例化</summary>
+        </member>
+        <member name="M:Stardust.Monitors.MongoDbDiagnosticListener.OnNext(System.Collections.Generic.KeyValuePair{System.String,System.Object})">
+            <summary>下一步</summary>
+            <param name="value"></param>
+        </member>
+        <member name="T:Stardust.Monitors.PingMonitor">
+            <summary>心跳监控。通过发往目标IP的Ping命令来计算延迟和丢包率，进一步得到分数</summary>
+        </member>
+        <member name="P:Stardust.Monitors.PingMonitor.Times">
+            <summary>心跳次数</summary>
+        </member>
+        <member name="P:Stardust.Monitors.PingMonitor.Interval">
+            <summary>多次心跳的间隔</summary>
+        </member>
+        <member name="M:Stardust.Monitors.PingMonitor.GetScoreAsync(System.String)">
+            <summary>执行多次Ping请求，获取网络质量评分</summary>
+            <param name="host"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Stardust.Monitors.SocketEventListener">
+            <summary>Socket事件监听器。用于监听HttpClient下层连接</summary>
+        </member>
+        <member name="M:Stardust.Monitors.SocketEventListener.#ctor">
+            <summary>实例化</summary>
+        </member>
+        <member name="M:Stardust.Monitors.SocketEventListener.OnEventWritten(System.Diagnostics.Tracing.EventWrittenEventArgs)">
+            <summary>写入事件。监听器拦截，并写入日志</summary>
+            <param name="eventData"></param>
+        </member>
+        <member name="T:Stardust.Monitors.SqlClientDiagnosticListener">
+            <summary>SqlClient诊断监听器</summary>
+        </member>
+        <member name="M:Stardust.Monitors.SqlClientDiagnosticListener.#ctor">
+            <summary>实例化</summary>
+        </member>
+        <member name="M:Stardust.Monitors.SqlClientDiagnosticListener.OnNext(System.Collections.Generic.KeyValuePair{System.String,System.Object})">
+            <summary>下一步</summary>
+            <param name="value"></param>
+        </member>
+        <member name="M:Stardust.Monitors.SqlClientDiagnosticListener.GetTables(System.String,System.Boolean)">
+            <summary>从Sql语句中截取表名</summary>
+            <param name="sql">Sql语句</param>
+            <param name="trimShard">是否去掉表名后面的分表信息。如日期分表</param>
+            <returns></returns>
+        </member>
+        <member name="T:Stardust.Monitors.StarTracer">
+            <summary>星尘性能追踪器，追踪数据提交到星尘平台</summary>
+            <remarks>其它项目有可能直接使用这个类代码，用于提交监控数据</remarks>
+        </member>
+        <member name="P:Stardust.Monitors.StarTracer.AppId">
+            <summary>应用标识</summary>
+        </member>
+        <member name="P:Stardust.Monitors.StarTracer.AppName">
+            <summary>应用名</summary>
+        </member>
+        <member name="P:Stardust.Monitors.StarTracer.ClientId">
+            <summary>实例。应用可能多实例部署，ip@proccessid</summary>
+        </member>
+        <member name="P:Stardust.Monitors.StarTracer.MaxFails">
+            <summary>最大失败数。超过该数时，新的数据将被抛弃，默认2 * 24 * 60</summary>
+        </member>
+        <member name="P:Stardust.Monitors.StarTracer.Excludes">
+            <summary>要排除的操作名</summary>
+        </member>
+        <member name="P:Stardust.Monitors.StarTracer.Client">
+            <summary>Api客户端</summary>
+        </member>
+        <member name="P:Stardust.Monitors.StarTracer.Factory">
+            <summary>星尘工厂</summary>
+        </member>
+        <member name="P:Stardust.Monitors.StarTracer.TrimSelf">
+            <summary>剔除埋点调用自己。默认true</summary>
+        </member>
+        <member name="P:Stardust.Monitors.StarTracer.EnableMeter">
+            <summary>性能收集。收集应用性能信息，数量较大的客户端可以不必收集应用性能信息</summary>
+        </member>
+        <member name="M:Stardust.Monitors.StarTracer.#ctor">
+            <summary>实例化</summary>
+        </member>
+        <member name="M:Stardust.Monitors.StarTracer.#ctor(System.String)">
+            <summary>指定服务端地址来实例化追踪器</summary>
+            <param name="server"></param>
+        </member>
+        <member name="M:Stardust.Monitors.StarTracer.ProcessSpans(NewLife.Log.ISpanBuilder[])">
+            <summary>处理Span集合。默认输出日志，可重定义输出控制台</summary>
+        </member>
+        <member name="M:Stardust.Monitors.StarTracer.AttachGlobal">
+            <summary>全局注入</summary>
+        </member>
+        <member name="M:Stardust.Monitors.StarTracer.Register(System.String)">
+            <summary>全局注册星尘性能追踪器</summary>
+            <param name="server">星尘监控中心地址，为空时自动从本地探测</param>
+            <returns></returns>
+        </member>
+        <member name="T:Stardust.Monitors.StarTracerResolver">
+            <summary>星尘追踪解析器</summary>
+        </member>
+        <member name="P:Stardust.Monitors.StarTracerResolver.MaxTracePerHost">
+            <summary>单个域名最大埋点数。默认16</summary>
+        </member>
+        <member name="P:Stardust.Monitors.StarTracerResolver.RequestTagLength">
+            <summary>请求标签长度。HttpClient请求和WebApi请求响应作为数据标签的最大长度，小于0时不使用，默认1024字符</summary>
+        </member>
+        <member name="M:Stardust.Monitors.StarTracerResolver.ResolveName(System.Uri,System.Object)">
+            <summary>从Uri中解析出埋点名称</summary>
+            <param name="uri"></param>
+            <param name="userState"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Stardust.Monitors.TraceModel">
+            <summary>追踪请求模型</summary>
+        </member>
+        <member name="P:Stardust.Monitors.TraceModel.AppId">
+            <summary>应用标识</summary>
+        </member>
+        <member name="P:Stardust.Monitors.TraceModel.AppName">
+            <summary>应用名</summary>
+        </member>
+        <member name="P:Stardust.Monitors.TraceModel.ClientId">
+            <summary>实例。应用可能多实例部署，ip@proccessid</summary>
+        </member>
+        <member name="P:Stardust.Monitors.TraceModel.Version">
+            <summary>版本</summary>
+        </member>
+        <member name="P:Stardust.Monitors.TraceModel.Info">
+            <summary>应用信息</summary>
+        </member>
+        <member name="P:Stardust.Monitors.TraceModel.Builders">
+            <summary>追踪数据</summary>
+        </member>
+        <member name="T:Stardust.Monitors.TraceResponse">
+            <summary>追踪响应模型</summary>
+        </member>
+        <member name="P:Stardust.Monitors.TraceResponse.Period">
+            <summary>采样周期。默认60s</summary>
+        </member>
+        <member name="P:Stardust.Monitors.TraceResponse.MaxSamples">
+            <summary>最大正常采样数。采样周期内，最多只记录指定数量的正常事件，用于绘制依赖关系</summary>
+        </member>
+        <member name="P:Stardust.Monitors.TraceResponse.MaxErrors">
+            <summary>最大异常采样数。采样周期内，最多只记录指定数量的异常事件，默认10</summary>
+        </member>
+        <member name="P:Stardust.Monitors.TraceResponse.Timeout">
+            <summary>超时时间。超过该时间时，当作异常来进行采样，默认5000毫秒</summary>
+        </member>
+        <member name="P:Stardust.Monitors.TraceResponse.MaxTagLength">
+            <summary>最大标签长度。超过该长度时将截断，默认1024字符</summary>
+        </member>
+        <member name="P:Stardust.Monitors.TraceResponse.RequestTagLength">
+            <summary>请求标签长度。HttpClient请求和WebApi请求响应作为数据标签的最大长度，小于0时不使用，默认1024字符</summary>
+        </member>
+        <member name="P:Stardust.Monitors.TraceResponse.EnableMeter">
+            <summary>性能收集。收集应用性能信息，数量较大的客户端可以不必收集应用性能信息</summary>
+        </member>
+        <member name="P:Stardust.Monitors.TraceResponse.Excludes">
+            <summary>要排除的操作名</summary>
+        </member>
+        <member name="T:Stardust.Plugins.IAgentPlugin">
+            <summary>星尘代理插件</summary>
+        </member>
+        <member name="M:Stardust.Plugins.IAgentPlugin.Start">
+            <summary>开始工作</summary>
+        </member>
+        <member name="M:Stardust.Plugins.IAgentPlugin.Stop(System.String)">
+            <summary>停止工作</summary>
+            <param name="reason"></param>
+        </member>
+        <member name="T:Stardust.Plugins.AgentPlugin">
+            <summary>星尘代理插件基类</summary>
+        </member>
+        <member name="P:Stardust.Plugins.AgentPlugin.Provider">
+            <summary>服务提供者</summary>
+        </member>
+        <member name="M:Stardust.Plugins.AgentPlugin.Init(System.String,System.IServiceProvider)">
+            <summary>初始化插件</summary>
+            <param name="identity"></param>
+            <param name="provider"></param>
+            <returns></returns>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="M:Stardust.Plugins.AgentPlugin.Start">
+            <summary>开始工作</summary>
+        </member>
+        <member name="M:Stardust.Plugins.AgentPlugin.Stop(System.String)">
+            <summary>停止工作</summary>
+            <param name="reason"></param>
+        </member>
+        <member name="T:Stardust.Registry.ServiceChangedCallback">
+            <summary>服务改变的委托</summary>
+            <param name="serviceName">服务名</param>
+            <param name="services">服务提供者集合</param>
+        </member>
+        <member name="T:Stardust.Registry.IRegistry">
+            <summary>注册客户端</summary>
+        </member>
+        <member name="M:Stardust.Registry.IRegistry.Bind(System.String,Stardust.Registry.ServiceChangedCallback)">
+            <summary>绑定消费服务名到指定事件，服务改变时通知外部</summary>
+            <param name="serviceName"></param>
+            <param name="callback"></param>
+        </member>
+        <member name="M:Stardust.Registry.IRegistry.Register(System.String,System.Func{System.String},System.String,System.String)">
+            <summary>发布服务（延迟），直到回调函数返回地址信息才做真正发布</summary>
+            <param name="serviceName">服务名</param>
+            <param name="addressCallback">服务地址回调</param>
+            <param name="tag">特性标签</param>
+            <param name="health">健康监测接口地址</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Registry.IRegistry.RegisterAsync(System.String,System.String,System.String,System.String)">
+            <summary>发布服务（直达）</summary>
+            <remarks>
+            可以多次调用注册，用于更新服务地址和特性标签等信息。
+            例如web应用，刚开始时可能并不知道自己的外部地址（域名和端口），有用户访问以后，即可得知并更新。
+            </remarks>
+            <param name="serviceName">服务名</param>
+            <param name="address">服务地址</param>
+            <param name="tag">特性标签</param>
+            <param name="health">健康监测接口地址</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Registry.IRegistry.RegisterAsync(Stardust.Models.PublishServiceInfo)">
+            <summary>发布服务（底层）。定时反复执行，让服务端更新注册信息</summary>
+            <param name="service">应用服务</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Registry.IRegistry.ResolveAsync(Stardust.Models.ConsumeServiceInfo)">
+            <summary>消费服务（底层）</summary>
+            <param name="service">应用服务</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Registry.IRegistry.ResolveAsync(System.String,System.String,System.String)">
+            <summary>消费得到服务地址信息</summary>
+            <param name="serviceName">服务名</param>
+            <param name="minVersion">最小版本</param>
+            <param name="tag">特性标签。只要包含该特性的服务提供者</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Registry.IRegistry.Unregister(System.String)">
+            <summary>取消服务</summary>
+            <param name="serviceName">服务名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Registry.IRegistry.UnregisterAsync(Stardust.Models.PublishServiceInfo)">
+            <summary>取消服务（底层）</summary>
+            <param name="service">应用服务</param>
+            <returns></returns>
+        </member>
+        <member name="T:Stardust.Registry.RegistryExtensions">
+            <summary>
+            服务注册客户端扩展
+            </summary>
+        </member>
+        <member name="M:Stardust.Registry.RegistryExtensions.CreateForServiceAsync(Stardust.Registry.IRegistry,System.String,System.String)">
+            <summary>为指定服务创建客户端，从星尘注册中心获取服务地址。单例，应避免频繁创建客户端</summary>
+            <param name="registry">服务注册客户端</param>
+            <param name="serviceName">服务名</param>
+            <param name="tag"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Registry.RegistryExtensions.CreateForService(Stardust.Registry.IRegistry,System.String,System.String)">
+            <summary>为指定服务创建客户端，从星尘注册中心获取服务地址。单例，应避免频繁创建客户端</summary>
+            <param name="registry">服务注册客户端</param>
+            <param name="serviceName">服务名</param>
+            <param name="tag"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Registry.RegistryExtensions.BindServices(NewLife.Remoting.ApiHttpClient,Stardust.Models.ServiceModel[])">
+            <summary>绑定客户端到服务集合，更新服务地址</summary>
+            <param name="client"></param>
+            <param name="ms"></param>
+        </member>
+        <member name="M:Stardust.Registry.RegistryExtensions.ResolveAddressAsync(Stardust.Registry.IRegistry,System.String,System.String,System.String)">
+            <summary>消费得到服务地址信息</summary>
+            <param name="registry">服务注册客户端</param>
+            <param name="serviceName">服务名</param>
+            <param name="minVersion">最小版本</param>
+            <param name="tag">特性标签。只要包含该特性的服务提供者</param>
+            <returns></returns>
+        </member>
+        <member name="T:Stardust.Services.IQueueService`2">
+            <summary>主动式消息服务</summary>
+            <typeparam name="TArg">数据类型</typeparam>
+            <typeparam name="TResult">结果类型</typeparam>
+        </member>
+        <member name="M:Stardust.Services.IQueueService`2.Publish(System.String,`0)">
+            <summary>发布消息</summary>
+            <param name="topic">主题</param>
+            <param name="value">消息</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Services.IQueueService`2.Subscribe(System.String,System.Func{`0,`1})">
+            <summary>订阅</summary>
+            <param name="topic">主题</param>
+            <param name="callback">回调</param>
+        </member>
+        <member name="M:Stardust.Services.IQueueService`2.UnSubscribe(System.String)">
+            <summary>取消订阅</summary>
+            <param name="topic">主题</param>
+        </member>
+        <member name="T:Stardust.Services.QueueService`2">
+            <summary>轻量级主动式消息服务</summary>
+            <typeparam name="TArg">数据类型</typeparam>
+            <typeparam name="TResult">结果类型</typeparam>
+        </member>
+        <member name="F:Stardust.Services.QueueService`2._topics">
+            <summary>每个主题的所有订阅者</summary>
+        </member>
+        <member name="M:Stardust.Services.QueueService`2.Publish(System.String,`0)">
+            <summary>发布消息</summary>
+            <param name="topic">主题</param>
+            <param name="value">消息</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Services.QueueService`2.Subscribe(System.String,System.Func{`0,`1})">
+            <summary>订阅</summary>
+            <param name="topic">主题</param>
+            <param name="callback">回调</param>
+        </member>
+        <member name="M:Stardust.Services.QueueService`2.UnSubscribe(System.String)">
+            <summary>取消订阅</summary>
+            <param name="topic">主题</param>
+        </member>
+        <member name="T:Stardust.Services.StringEventContext">
+            <summary>字符串事件上下文</summary>
+        </member>
+        <member name="M:Stardust.Services.StringEventContext.#ctor(NewLife.Messaging.IEventBus,System.String)">
+            <summary>字符串事件上下文</summary>
+        </member>
+        <member name="P:Stardust.Services.StringEventContext.EventBus">
+            <summary>事件总线</summary>
+        </member>
+        <member name="P:Stardust.Services.StringEventContext.Message">
+            <summary>原始消息</summary>
+        </member>
+        <member name="T:Stardust.Services.StarEventBus`1">
+            <summary>星尘事件总线。借助星尘websocket链路收发消息</summary>
+            <typeparam name="TEvent"></typeparam>
+            <param name="client"></param>
+            <param name="topic"></param>
+        </member>
+        <member name="M:Stardust.Services.StarEventBus`1.#ctor(Stardust.AppClient,System.String)">
+            <summary>星尘事件总线。借助星尘websocket链路收发消息</summary>
+            <typeparam name="TEvent"></typeparam>
+            <param name="client"></param>
+            <param name="topic"></param>
+        </member>
+        <member name="P:Stardust.Services.StarEventBus`1.Timeout">
+            <summary>超时时间。默认5000毫秒</summary>
+        </member>
+        <member name="P:Stardust.Services.StarEventBus`1.IsReady">
+            <summary>是否准备好。客户端已登录且已订阅</summary>
+        </member>
+        <member name="P:Stardust.Services.StarEventBus`1.Tracer">
+            <summary>链路追踪</summary>
+        </member>
+        <member name="M:Stardust.Services.StarEventBus`1.Subscribe(NewLife.Messaging.IEventHandler{`0},System.String)">
+            <summary>订阅消息。先本地再远程</summary>
+            <param name="handler">事件处理器</param>
+            <param name="clientId">客户端标识</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Services.StarEventBus`1.SubscribeAsync(NewLife.Messaging.IEventHandler{`0},System.String,System.Threading.CancellationToken)">
+            <summary>订阅消息。先本地再远程</summary>
+            <param name="handler">事件处理器</param>
+            <param name="clientId">客户端标识</param>
+            <param name="cancellationToken">取消通知</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Services.StarEventBus`1.Unsubscribe(System.String)">
+            <summary>取消订阅消息。先远程再本地</summary>
+            <param name="clientId">客户端标识</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Services.StarEventBus`1.UnsubscribeAsync(System.String,System.Threading.CancellationToken)">
+            <summary>取消订阅消息。先远程再本地</summary>
+            <param name="clientId">客户端标识</param>
+            <param name="cancellationToken">取消通知</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Services.StarEventBus`1.PublishAsync(`0,NewLife.Messaging.IEventContext,System.Threading.CancellationToken)">
+            <summary>发布消息到消息队列。经星尘平台转发给各应用</summary>
+            <param name="event">事件</param>
+            <param name="context">上下文</param>
+            <param name="cancellationToken">取消令牌</param>
+        </member>
+        <member name="M:Stardust.Services.StarEventBus`1.HandleAsync(System.String,NewLife.Messaging.IEventContext,System.Threading.CancellationToken)">
+            <summary>分发处理消息。反序列化为事件对象后分发给本地事件处理器</summary>
+            <param name="message">事件消息原文。一般是json形式</param>
+            <param name="context">事件上下文。用于在发布者、订阅者及中间处理器之间传递协调数据，如 Handler、ClientId 等</param>
+            <param name="cancellationToken">取消令牌</param>
+            <returns></returns>
+        </member>
+        <member name="T:Stardust.Services.TraceService">
+            <summary>追踪服务</summary>
+        </member>
+        <member name="M:Stardust.Services.TraceService.Attach(NewLife.Remoting.Clients.ICommandClient)">
+            <summary>初始化</summary>
+        </member>
+        <member name="T:Stardust.StarClient">
+            <summary>星星客户端。每个设备节点有一个客户端连接服务端</summary>
+        </member>
+        <member name="P:Stardust.StarClient.ProductCode">
+            <summary>产品编码</summary>
+        </member>
+        <member name="E:Stardust.StarClient.OnMigration">
+            <summary>服务迁移</summary>
+        </member>
+        <member name="P:Stardust.StarClient.Plugins">
+            <summary>插件列表</summary>
+        </member>
+        <member name="M:Stardust.StarClient.#ctor">
+            <summary>实例化</summary>
+        </member>
+        <member name="M:Stardust.StarClient.#ctor(System.String)">
+            <summary>实例化</summary>
+            <param name="urls"></param>
+        </member>
+        <member name="M:Stardust.StarClient.OnInit">
+            <summary>初始化</summary>
+        </member>
+        <member name="M:Stardust.StarClient.BuildLoginRequest">
+            <summary>创建登录请求</summary>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.StarClient.GetNodeInfo">
+            <summary>获取设备信息</summary>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.StarClient.FillOnWindows(Stardust.Models.NodeInfo)">
+            <summary>填充Windows专属信息</summary>
+            <param name="di"></param>
+        </member>
+        <member name="M:Stardust.StarClient.FillOnLinux(Stardust.Models.NodeInfo)">
+            <summary>填充Linux专属信息</summary>
+            <param name="di"></param>
+        </member>
+        <member name="M:Stardust.StarClient.GetDrives">
+            <summary>获取驱动器信息</summary>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.StarClient.BuildPingRequest">
+            <summary>构建心跳请求</summary>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.StarClient.Ping(System.Threading.CancellationToken)">
+            <summary>心跳</summary>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.StarClient.GetDeploy(System.Int32,System.String,System.String)">
+            <summary>获取分配到本节点的应用服务信息</summary>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.StarClient.UploadDeploy(Stardust.Models.ServiceInfo[])">
+            <summary>上传本节点的所有应用服务信息</summary>
+            <param name="services"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.StarClient.AppPing(Stardust.Models.AppInfo)">
+            <summary>应用心跳。上报应用信息</summary>
+            <param name="inf"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Stardust.StarFactory">
+            <summary>星尘工厂</summary>
+            <remarks>
+            文档 https://newlifex.com/blood/stardust
+            星尘代理 https://newlifex.com/blood/staragent
+            节点管理 https://newlifex.com/blood/stardust_node
+            注册中心 https://newlifex.com/blood/stardust_registry
+            监控中心 https://newlifex.com/blood/stardust_monitor
+            配置中心 https://newlifex.com/blood/stardust_configcenter
+            发布中心 https://newlifex.com/blood/stardust_deploy
+            </remarks>
+        </member>
+        <member name="P:Stardust.StarFactory.Server">
+            <summary>服务器地址</summary>
+        </member>
+        <member name="P:Stardust.StarFactory.AppId">
+            <summary>应用</summary>
+        </member>
+        <member name="P:Stardust.StarFactory.AppName">
+            <summary>应用名</summary>
+        </member>
+        <member name="P:Stardust.StarFactory.Secret">
+            <summary>应用密钥</summary>
+        </member>
+        <member name="P:Stardust.StarFactory.ClientId">
+            <summary>实例。应用可能多实例部署，ip@proccessid</summary>
+        </member>
+        <member name="P:Stardust.StarFactory.Client">
+            <summary>客户端</summary>
+        </member>
+        <member name="P:Stardust.StarFactory.App">
+            <summary>应用客户端</summary>
+        </member>
+        <member name="P:Stardust.StarFactory.ConfigInfo">
+            <summary>配置信息。从配置中心返回的信息头</summary>
+        </member>
+        <member name="P:Stardust.StarFactory.Local">
+            <summary>本地星尘代理</summary>
+        </member>
+        <member name="P:Stardust.StarFactory.InternalAddress">
+            <summary>内网地址。用于内网访问的地址集，包括协议地址端口，多地址逗号隔开</summary>
+        </member>
+        <member name="P:Stardust.StarFactory.ExternalAddress">
+            <summary>外网地址。用于外网访问的地址集，包括协议地址端口，多地址逗号隔开</summary>
+        </member>
+        <member name="M:Stardust.StarFactory.#ctor">
+            <summary>
+            实例化星尘工厂，先后读取appsettings.json、本地StarAgent、star.config
+            </summary>
+        </member>
+        <member name="M:Stardust.StarFactory.#ctor(System.String,System.String,System.String)">
+            <summary>实例化星尘工厂，指定地址、应用和密钥，创建工厂</summary>
+            <param name="server">服务端地址。为空时先后读取appsettings.json、本地StarAgent、star.config，初始值为空，不连接服务端</param>
+            <param name="appId">应用标识。为空时读取star.config，初始值为入口程序集名称</param>
+            <param name="secret">应用密钥。为空时读取star.config，初始值为空</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.StarFactory.Dispose(System.Boolean)">
+            <summary>销毁</summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:Stardust.StarFactory.Register(NewLife.Model.IObjectContainer)">
+            <summary>注册到对象容器</summary>
+            <param name="container"></param>
+        </member>
+        <member name="M:Stardust.StarFactory.SetServer(System.String)">
+            <summary>设置服务端地址</summary>
+        </member>
+        <member name="P:Stardust.StarFactory.Tracer">
+            <summary>监控中心</summary>
+        </member>
+        <member name="P:Stardust.StarFactory.Config">
+            <summary>配置中心。务必在数据库操作和生成雪花Id之前使用激活</summary>
+            <remarks>
+            文档 https://newlifex.com/blood/stardust_configcenter
+            </remarks>
+        </member>
+        <member name="M:Stardust.StarFactory.SetLocalConfig(NewLife.Configuration.IConfigProvider)">
+            <summary>设置本地配置提供者，该提供者将跟星尘配置结合到一起，形成复合配置提供者</summary>
+            <param name="configProvider"></param>
+        </member>
+        <member name="M:Stardust.StarFactory.GetConfig">
+            <summary>获取复合配置提供者</summary>
+            <returns></returns>
+        </member>
+        <member name="P:Stardust.StarFactory.Service">
+            <summary>注册中心，服务注册与发现</summary>
+        </member>
+        <member name="M:Stardust.StarFactory.CreateForService(System.String,System.String)">
+            <summary>为指定服务创建客户端，从星尘注册中心获取服务地址。单例，应避免频繁创建客户端</summary>
+            <param name="serviceName"></param>
+            <param name="tag"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.StarFactory.CreateForServiceAsync(System.String,System.String)">
+            <summary>为指定服务创建客户端，从星尘注册中心获取服务地址。单例，应避免频繁创建客户端</summary>
+            <param name="serviceName"></param>
+            <param name="tag"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.StarFactory.RegisterAsync(System.String,System.String,System.String,System.String)">
+            <summary>发布服务。异步发布，屏蔽异常</summary>
+            <remarks>即使发布失败，也已经加入队列，后续会定时发布</remarks>
+            <param name="serviceName">服务名</param>
+            <param name="address">服务地址</param>
+            <param name="tag">特性标签</param>
+            <param name="health">健康监测接口地址</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.StarFactory.ResolveAddressAsync(System.String,System.String,System.String)">
+            <summary>消费得到服务地址信息</summary>
+            <param name="serviceName">服务名</param>
+            <param name="minVersion">最小版本</param>
+            <param name="tag">特性标签。只要包含该特性的服务提供者</param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.StarFactory.SendNodeCommand(System.String,System.String,System.String,System.Int32,System.Int32,System.Int32)">
+            <summary>发送节点命令。通知节点更新、安装和启停应用等</summary>
+            <param name="nodeCode"></param>
+            <param name="command"></param>
+            <param name="argument"></param>
+            <param name="startTime"></param>
+            <param name="expire"></param>
+            <param name="timeout"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.StarFactory.SendAppCommand(System.String,System.String,System.String,System.String,System.Int32,System.Int32,System.Int32)">
+            <summary>发送应用命令。通知应用刷新配置信息和服务信息等</summary>
+            <param name="appId"></param>
+            <param name="clientId"></param>
+            <param name="command"></param>
+            <param name="argument"></param>
+            <param name="startTime"></param>
+            <param name="expire"></param>
+            <param name="timeout"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.StarFactory.SetWatchdog(System.Int32)">
+            <summary>设置看门狗超时时间</summary>
+            <param name="timeout">超时时间，单位秒。0表示关闭看门狗</param>
+            <returns></returns>
+        </member>
+        <member name="P:Stardust.StarFactory.Log">
+            <summary>日志。默认 XTrace.Log</summary>
+        </member>
+        <member name="T:Stardust.StarHelper">
+            <summary>星尘辅助类</summary>
+        </member>
+        <member name="M:Stardust.StarHelper.AddStardust(NewLife.Model.IObjectContainer,System.String)">
+            <summary>添加星尘，提供监控、配置和服务注册发现能力。先后从参数配置和本机StarAgent读取星尘平台地址</summary>
+            <param name="services"></param>
+            <param name="appId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.StarHelper.AddStardust(NewLife.Model.IObjectContainer,System.String,System.String,System.String)">
+            <summary>添加星尘，提供监控、配置和服务注册发现能力。先后从参数配置和本机StarAgent读取星尘平台地址</summary>
+            <param name="services"></param>
+            <param name="server">服务端地址。为空时先后读取appsettings.json、本地StarAgent、star.config，初始值为空，不连接服务端</param>
+            <param name="appId">应用标识。为空时读取star.config，初始值为入口程序集名称</param>
+            <param name="secret">应用密钥。为空时读取star.config，初始值为空</param>
+            <returns></returns>
+        </member>
+        <member name="T:Stardust.StarSetting">
+            <summary>星尘客户端配置</summary>
+        </member>
+        <member name="P:Stardust.StarSetting.Debug">
+            <summary>调试开关。默认false</summary>
+        </member>
+        <member name="P:Stardust.StarSetting.Server">
+            <summary>星尘服务端地址。如http://star.newlifex.com:6600，默认为空</summary>
+        </member>
+        <member name="P:Stardust.StarSetting.AppKey">
+            <summary>应用标识。接入星尘注册中心，英文名</summary>
+        </member>
+        <member name="P:Stardust.StarSetting.Secret">
+            <summary>应用密钥。接入星尘注册中心</summary>
+        </member>
+        <member name="P:Stardust.StarSetting.ServiceAddress">
+            <summary>服务地址。用户访问的原始外网地址，用于内部构造其它Url，多地址逗号隔开，根据用户访问频率取前5</summary>
+        </member>
+        <member name="P:Stardust.StarSetting.TracerPeriod">
+            <summary>跟踪采样周期。定期上报埋点数据到星尘平台，默认60s</summary>
+        </member>
+        <member name="P:Stardust.StarSetting.MaxSamples">
+            <summary>最大正常采样数。采样周期内，最多只记录指定数量的正常事件，用于绘制依赖关系，默认1</summary>
+        </member>
+        <member name="P:Stardust.StarSetting.MaxErrors">
+            <summary>最大异常采样数。采样周期内，最多只记录指定数量的异常事件，默认10</summary>
+        </member>
+        <member name="T:Stardust.Storages.AddressInfo">
+            <summary>地址信息</summary>
+        </member>
+        <member name="P:Stardust.Storages.AddressInfo.NodeName">
+            <summary>节点名称</summary>
+        </member>
+        <member name="P:Stardust.Storages.AddressInfo.InternalAddress">
+            <summary>内网地址</summary>
+        </member>
+        <member name="P:Stardust.Storages.AddressInfo.ExternalAddress">
+            <summary>外网地址</summary>
+        </member>
+        <member name="T:Stardust.Storages.DefaultFileStorage">
+            <summary>分布式文件存储默认基类，用于编排文件同步流程。具体应用应继承并实现与存储相关的操作。</summary>
+        </member>
+        <member name="P:Stardust.Storages.DefaultFileStorage.Name">
+            <summary>名称。作为事件总线Topic的前缀。相同名称的多个应用共享一个文件存储集群，如StarWeb和StarServer。默认为null时使用应用标识，集群部署的多节点应用实例共享文件存储</summary>
+        </member>
+        <member name="P:Stardust.Storages.DefaultFileStorage.NewFileBus">
+            <summary>用于广播新文件消息的事件总线。</summary>
+        </member>
+        <member name="P:Stardust.Storages.DefaultFileStorage.FileRequestBus">
+            <summary>用于发布文件请求消息的事件总线。</summary>
+        </member>
+        <member name="P:Stardust.Storages.DefaultFileStorage.ServiceProvider">
+            <summary>服务提供者，用于解析 StarFactory 等依赖。</summary>
+        </member>
+        <member name="P:Stardust.Storages.DefaultFileStorage.NodeName">
+            <summary>当前节点的逻辑名称（ClientId：IP@ProcessId）。</summary>
+        </member>
+        <member name="P:Stardust.Storages.DefaultFileStorage.RootPath">
+            <summary>作为文件存储的根路径</summary>
+        </member>
+        <member name="P:Stardust.Storages.DefaultFileStorage.DownloadUri">
+            <summary>用于通过HTTP等方式拉取文件的基础地址</summary>
+        </member>
+        <member name="M:Stardust.Storages.DefaultFileStorage.Dispose(System.Boolean)">
+            <summary>销毁释放</summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:Stardust.Storages.DefaultFileStorage.InitializeAsync(System.Threading.CancellationToken)">
+            <summary>初始化，确保订阅事件总线并设置处理逻辑。</summary>
+        </member>
+        <member name="M:Stardust.Storages.DefaultFileStorage.OnInitializedAsync(System.Threading.CancellationToken)">
+            <summary>事件总线订阅完成后调用，覆写以执行额外初始化。</summary>
+        </member>
+        <member name="M:Stardust.Storages.DefaultFileStorage.SetEventBus(NewLife.Caching.ICacheProvider)">
+            <summary>设置事件总线</summary>
+            <param name="cacheProvider"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Storages.DefaultFileStorage.SetEventBus(Stardust.AppClient)">
+            <summary>设置事件总线</summary>
+            <param name="client"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Stardust.Storages.DefaultFileStorage.PublishNewFileAsync(System.Int64,System.String,System.Threading.CancellationToken)">
+            <summary>广播指定附件在当前节点可用。</summary>
+        </member>
+        <member name="M:Stardust.Storages.DefaultFileStorage.PublishNewFileAsync(Stardust.Storages.IFileInfo,System.Threading.CancellationToken)">
+            <summary>广播指定附件在当前节点可用。</summary>
+        </member>
+        <member name="M:Stardust.Storages.DefaultFileStorage.OnNewFileInfoAsync(Stardust.Storages.NewFileInfo,NewLife.Messaging.IEventContext,System.Threading.CancellationToken)">
+            <summary>处理新文件消息。</summary>
+        </member>
+        <member name="M:Stardust.Storages.DefaultFileStorage.FetchFileAsync(Stardust.Storages.IFileInfo,System.String,System.Threading.CancellationToken)">
+            <summary>通过应用自定义的传输方式（如HTTP接口）从指定源节点拉取文件数据。</summary>
+        </member>
+        <member name="M:Stardust.Storages.DefaultFileStorage.RequestFileAsync(System.Int64,System.String,System.String,System.Threading.CancellationToken)">
+            <summary>发布请求，向其他节点索取指定附件。</summary>
+        </member>
+        <member name="M:Stardust.Storages.DefaultFileStorage.RequestFileAsync(Stardust.Storages.IFileInfo,System.String,System.Threading.CancellationToken)">
+            <summary>发布请求，向其他节点索取指定附件。</summary>
+        </member>
+        <member name="M:Stardust.Storages.DefaultFileStorage.OnFileRequestAsync(Stardust.Storages.FileRequest,NewLife.Messaging.IEventContext,System.Threading.CancellationToken)">
+            <summary>处理文件请求消息。</summary>
+        </member>
+        <member name="M:Stardust.Storages.DefaultFileStorage.ScanFilesAsync(System.DateTime,System.Threading.CancellationToken)">
+            <summary>批量扫描并请求缺失附件，返回已发出请求数。</summary>
+        </member>
+        <member name="M:Stardust.Storages.DefaultFileStorage.GetMissingAttachments(System.DateTime)">
+            <summary>查询从指定时间开始本地缺失的附件，用于触发同步。</summary>
+        </member>
+        <member name="M:Stardust.Storages.DefaultFileStorage.CheckLocalFile(System.String,System.String)">
+            <summary>检查本地是否存在附件文件且哈希匹配。</summary>
+        </member>
+        <member name="M:Stardust.Storages.DefaultFileStorage.GetLocalFileMeta(System.Int64,System.String)">
+            <summary>获取本地文件的元数据</summary>
+        </member>
+        <member name="M:Stardust.Storages.DefaultFileStorage.BuildAddressInfo">
+            <summary>构建当前节点地址信息。</summary>
+        </member>
+        <member name="P:Stardust.Storages.DefaultFileStorage.Tracer">
+            <summary>追踪器</summary>
+        </member>
+        <member name="P:Stardust.Storages.DefaultFileStorage.Log">
+            <summary>日志</summary>
+        </member>
+        <member name="M:Stardust.Storages.DefaultFileStorage.WriteLog(System.String,System.Object[])">
+            <summary>写日志</summary>
+        </member>
+        <member name="T:Stardust.Storages.FileRequest">
+            <summary>
+            文件请求消息：请求其他节点提供指定附件文件。
+            </summary>
+        </member>
+        <member name="P:Stardust.Storages.FileRequest.Id">
+            <summary>公共数据库中的附件ID。</summary>
+        </member>
+        <member name="P:Stardust.Storages.FileRequest.Name">
+            <summary>名称</summary>
+        </member>
+        <member name="P:Stardust.Storages.FileRequest.Path">
+            <summary>相对路径</summary>
+        </member>
+        <member name="P:Stardust.Storages.FileRequest.Hash">
+            <summary>文件内容哈希（如SHA256），用于快速验证</summary>
+        </member>
+        <member name="P:Stardust.Storages.FileRequest.Reason">
+            <summary>请求原因（用于诊断）（可选）。</summary>
+        </member>
+        <member name="P:Stardust.Storages.FileRequest.RequestNode">
+            <summary>发起请求的逻辑节点名称。</summary>
+        </member>
+        <member name="T:Stardust.Storages.IFileInfo">
+            <summary>文件信息接口</summary>
+        </member>
+        <member name="P:Stardust.Storages.IFileInfo.Id">
+            <summary>公共数据库中的附件ID。</summary>
+        </member>
+        <member name="P:Stardust.Storages.IFileInfo.Name">
+            <summary>文件名称</summary>
+        </member>
+        <member name="P:Stardust.Storages.IFileInfo.Path">
+            <summary>相对路径</summary>
+        </member>
+        <member name="P:Stardust.Storages.IFileInfo.Hash">
+            <summary>文件内容哈希（如SHA256），用于快速验证</summary>
+        </member>
+        <member name="P:Stardust.Storages.IFileInfo.Length">
+            <summary>文件大小（字节）</summary>
+        </member>
+        <member name="T:Stardust.Storages.IFileStorage">
+            <summary>描述在多节点间传播附件文件所需的操作</summary>
+        </member>
+        <member name="P:Stardust.Storages.IFileStorage.NodeName">
+            <summary>当前节点的逻辑名称。</summary>
+        </member>
+        <member name="M:Stardust.Storages.IFileStorage.InitializeAsync(System.Threading.CancellationToken)">
+            <summary>确保实现类已订阅配置的事件总线。</summary>
+        </member>
+        <member name="M:Stardust.Storages.IFileStorage.PublishNewFileAsync(System.Int64,System.String,System.Threading.CancellationToken)">
+            <summary>广播指定附件在当前节点可用。</summary>
+        </member>
+        <member name="M:Stardust.Storages.IFileStorage.PublishNewFileAsync(Stardust.Storages.IFileInfo,System.Threading.CancellationToken)">
+            <summary>广播指定附件在当前节点可用。</summary>
+        </member>
+        <member name="M:Stardust.Storages.IFileStorage.RequestFileAsync(System.Int64,System.String,System.String,System.Threading.CancellationToken)">
+            <summary>发布文件请求，向其他节点索取指定附件。</summary>
+        </member>
+        <member name="M:Stardust.Storages.IFileStorage.ScanFilesAsync(System.DateTime,System.Threading.CancellationToken)">
+            <summary>扫描并批量请求缺失附件，返回发出请求的数量。</summary>
+        </member>
+        <member name="T:Stardust.Storages.NewFileInfo">
+            <summary>
+            新文件消息：宣告指定附件在某个节点可用。
+            </summary>
+        </member>
+        <member name="P:Stardust.Storages.NewFileInfo.Id">
+            <summary>公共数据库中的附件ID。</summary>
+        </member>
+        <member name="P:Stardust.Storages.NewFileInfo.Name">
+            <summary>文件名称</summary>
+        </member>
+        <member name="P:Stardust.Storages.NewFileInfo.Path">
+            <summary>相对路径</summary>
+        </member>
+        <member name="P:Stardust.Storages.NewFileInfo.Hash">
+            <summary>文件内容哈希（如SHA256），用于快速验证</summary>
+        </member>
+        <member name="P:Stardust.Storages.NewFileInfo.Length">
+            <summary>文件大小（字节）</summary>
+        </member>
+        <member name="P:Stardust.Storages.NewFileInfo.SourceNode">
+            <summary>当前文件所在的逻辑节点名称。</summary>
+        </member>
+        <member name="P:Stardust.Storages.NewFileInfo.InternalAddress">
+            <summary>内网地址</summary>
+        </member>
+        <member name="P:Stardust.Storages.NewFileInfo.ExternalAddress">
+            <summary>外网地址</summary>
+        </member>
+        <member name="P:Stardust.Storages.NewFileInfo.TraceId">
+            <summary>追踪标识</summary>
+        </member>
+        <member name="T:Stardust.WeiXin.Article">
+            <summary>企业微信文章消息</summary>
+        </member>
+        <member name="P:Stardust.WeiXin.Article.Title">
+            <summary>标题，不超过128个字节，超过会自动截断</summary>
+        </member>
+        <member name="P:Stardust.WeiXin.Article.Description">
+            <summary>描述，不超过512个字节，超过会自动截断</summary>
+        </member>
+        <member name="P:Stardust.WeiXin.Article.Url">
+            <summary>点击后跳转的链接。</summary>
+        </member>
+        <member name="P:Stardust.WeiXin.Article.PicUrl">
+            <summary>图文消息的图片链接，支持JPG、PNG格式，较好的效果为大图 1068*455，小图150*150。</summary>
+        </member>
+        <member name="T:Stardust.WeiXin.WeiXinClient">
+            <summary>企业微信机器人。webhook推送</summary>
+        </member>
+        <member name="P:Stardust.WeiXin.WeiXinClient.Url">
+            <summary>服务地址</summary>
+        </member>
+        <member name="P:Stardust.WeiXin.WeiXinClient.Tracer">
+            <summary>性能追踪</summary>
+        </member>
+        <member name="M:Stardust.WeiXin.WeiXinClient.SendText(System.String,System.String[])">
+            <summary>发送文本消息</summary>
+            <param name="content">消息内容</param>
+            <param name="mentions">提醒人。userid，或者手机号，支持@all</param>
+        </member>
+        <member name="M:Stardust.WeiXin.WeiXinClient.SendMarkDown(System.String)">
+            <summary>发送markdown</summary>
+            <param name="content"></param>
+        </member>
+        <member name="M:Stardust.WeiXin.WeiXinClient.SendImage(System.Byte[])">
+            <summary>发送图片</summary>
+            <param name="image"></param>
+        </member>
+        <member name="M:Stardust.WeiXin.WeiXinClient.SendNews(Stardust.WeiXin.Article[])">
+            <summary>发送图文，文章列表</summary>
+            <param name="articles"></param>
+        </member>
+        <member name="P:Stardust.WeiXin.WeiXinClient.Log">
+            <summary>日志</summary>
+        </member>
+        <member name="M:Stardust.WeiXin.WeiXinClient.WriteLog(System.String,System.Object[])">
+            <summary>写日志</summary>
+            <param name="format"></param>
+            <param name="args"></param>
+        </member>
+        <member name="T:Stardust.Windows.NativeWifi">
+            <summary>
+            A managed implementation of Native Wifi API
+            </summary>
+        </member>
+        <member name="F:Stardust.Windows.NativeWifi.DOT11_BSS_TYPE.Infrastructure">
+            <summary>
+            Infrastructure BSS network
+            </summary>
+        </member>
+        <member name="F:Stardust.Windows.NativeWifi.DOT11_BSS_TYPE.Independent">
+            <summary>
+            Independent BSS (IBSS) network
+            </summary>
+        </member>
+        <member name="F:Stardust.Windows.NativeWifi.DOT11_BSS_TYPE.Any">
+            <summary>
+            Either infrastructure or IBSS network
+            </summary>
+        </member>
+        <member name="M:Stardust.Windows.NativeWifi.GetAvailableNetworkSsids">
+            <summary>
+            Gets SSIDs of available wireless LANs.
+            </summary>
+            <returns>SSIDs</returns>
+        </member>
+        <member name="M:Stardust.Windows.NativeWifi.GetConnectedNetworkSsids">
+            <summary>
+            Gets SSIDs of connected wireless LANs.
+            </summary>
+            <returns>SSIDs</returns>
+        </member>
+        <member name="T:StartupHook">
+            <summary>启动钩子</summary>
+        </member>
+        <member name="M:StartupHook.Initialize">
+            <summary>被 DOTNET_STARTUP_HOOKS 调用的初始化方法</summary>
+        </member>
+    </members>
+</doc>
